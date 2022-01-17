@@ -43,7 +43,6 @@ contract NFT is ERC721URIStorage {
 
     //sends tokens to address(0)
     function burn(uint256 tokenId) public virtual {
-        //solhint-disable-next-line max-line-length
         require(
             _isApprovedOrOwner(_msgSender(), tokenId),
             "ERC721Burnable: caller is not owner nor approved"

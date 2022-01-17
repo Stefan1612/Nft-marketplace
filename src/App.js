@@ -29,8 +29,8 @@ const {utils, BigNumber} = require('ethers');
 function App() {
     
     //contract addresses
-    const nftmarketaddress = "0x322813Fd9A801c5507c9de605d63CEA4f2CE6c44"
-    const nftaddress = "0xa85233C63b9Ee964Add6F2cffe00Fd84eb32338f"
+    const nftmarketaddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3"
+    const nftaddress = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"
 
     //handle State
     const [account, setAccount] = useState("")  
