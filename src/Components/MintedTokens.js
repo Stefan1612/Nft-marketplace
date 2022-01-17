@@ -6,7 +6,7 @@ const MintedTokens = (props) => {
         <h1 className="text-center">Minted Nft list</h1>
             <br></br>
             <form class="form-inline text-center">
-            <input class="form-control mr-sm-2" type="text" placeholder="Search"/>
+            <input style={{margin: "auto", width: "12vw"}}class="form-control mr-sm-2" type="text" placeholder="Search"/>
             <button class="btn btn-outline-success my-2 my-sm-0 " type="submit">Search</button><i class="fas fa-cat" ></i>
             </form>
             <br></br>
