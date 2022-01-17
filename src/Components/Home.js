@@ -9,7 +9,7 @@ const Home = (props) => {
             <button class="btn btn-outline-success my-2 my-sm-0 " type="submit">Search</button><i class="fas fa-cat" ></i>
             </form>
             <br></br>
-       {props.onSaleNFTs.length == 0 && <h1>There are no Tokens up for sale</h1>}
+       {props.onSaleNFTs.length == 0 && <h1 className="text-center " style={{marginTop: "4vh"}}>There are currently no Tokens up for sale</h1>}
        <br></br>
         <div className="col-md-10 offset-md-1 d-flex justify-content-around" style={{marginTop: "6vh"}}>{
              props.onSaleNFTs.map(index => {

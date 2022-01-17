@@ -9,7 +9,7 @@ const OwnNfts = (props) => {
             <button class="btn btn-outline-success my-2 my-sm-0 " type="submit">Search</button><i class="fas fa-cat" ></i>
             </form>
             <br></br>
-            {props.ownNFTs.length == 0 && <h1>You don't own any NFTs currently!</h1>}
+            {props.ownNFTs.length == 0 && <h1 className="text-center " style={{marginTop: "4vh"}}>You don't own any NFTs currently!</h1>}
        <br></br>
         <div className="col-md-10 offset-md-1 d-flex justify-content-around" style={{marginTop: "6vh"}}>{
              props.ownNFTs.map(index => {
