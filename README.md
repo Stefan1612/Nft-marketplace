@@ -1,4 +1,4 @@
-# VRF-Lottery Status/Issues/Ideas
+# NFT-Marketplace Status/Issues/Ideas
 
 ## Small description of the project
 
