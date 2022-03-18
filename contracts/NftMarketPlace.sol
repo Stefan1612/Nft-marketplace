@@ -9,34 +9,21 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 import "hardhat/console.sol";
 
 // to get the transferFrom method
-import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
 // security against transactions for multiple requests
 
-contract NftMarketPlace {
-    uint256 listingPrice = 0.002 ether;
+contract NftMarketPlace is ReentrancyGuard{
+    uint256 constant public listingPrice = 0.002 ether;
 
     using Counters for Counters.Counter;
 
     Counters.Counter private _tokenIds;
     Counters.Counter private _tokensSold;
 
-    function withdrawContractProfits() public {
-        require(msg.sender == owner, "only the owner can call this function");
-        payable(msg.sender).transfer(profits);
-    }
-
-    uint256 profits;
-
-    address owner;
-
-    constructor() {
-        owner = payable(msg.sender);
-    }
-
-    // Market Token that gets minted everytime someone mints on our market
+    // Market Token that gets minted every time someone mints on our market
     struct MarketToken {
         address nftContractAddress;
         uint256 tokenId;
@@ -47,17 +34,56 @@ contract NftMarketPlace {
         address minter;
     }
 
-    mapping(uint256 => MarketToken) idToMarketToken;
+    mapping(uint256 => MarketToken) public idToMarketToken;
 
+    uint256 private profits;
+
+    address immutable public owner;
+
+    
+    constructor() {
+        owner = payable(msg.sender);
+    }
+
+    event marketItemCreated(
+        address indexed nftContractAddress,
+        uint256 indexed tokenId,
+        uint256 price,
+        bool onSale,
+        address indexed owner,
+        address seller,
+        address minter
+    );
+    event marketItemOnSale(
+        address indexed nftContractAddress,
+        uint256 tokenId,
+        uint256 price,
+        bool onSale,
+        address owner,
+        address indexed seller,
+        address minter
+    );
+    event marketItemBought(
+        address indexed nftContractAddress,
+        uint256 tokenId,
+        uint256 price,
+        bool onSale,
+        address owner,
+        address indexed seller,
+        address minter
+    );
     //modifer to get the exact listing price
     modifier paidListingPrice() {
         require(msg.value == listingPrice, "You need to pay the listingPrice");
         _;
     }
-
+    function withdrawContractProfits() public {
+        require(msg.sender == owner, "only the owner can call this function");
+        payable(msg.sender).transfer(profits);
+    }
     // creates marketToken and mints nft at given address(_nftContractAddress), transfers
     function mintMarketToken(address _nftContractAddress)
-        public
+        external
         payable
         paidListingPrice
     {
@@ -75,13 +101,14 @@ contract NftMarketPlace {
         );
 
         profits += msg.value;
+        emit marketItemCreated(_nftContractAddress, currentTokenID, 0, false, msg.sender,address(0),msg.sender);
     }
 
     function saleMarketToken(
         uint256 _tokenId,
         uint256 sellPrice,
         address _nftContractAddress
-    ) public {
+    ) external {
         require(sellPrice > 0, "Price must be atleast one wei");
         /*uint256 currentTokenID = _tokenIds.current();
         require(_tokenId <= currentTokenID, "non valid TokenID");
@@ -108,9 +135,10 @@ contract NftMarketPlace {
     }
 
     function buyMarketToken(uint256 _tokenId, address _nftContractAddress)
-        public
-        payable
-    {
+        external
+        payable nonReentrant 
+    {   
+        require(_tokenId > 0, "TokenId must be over 0");
         require(
             msg.value == idToMarketToken[_tokenId].price,
             "Message value must be equal to sellPrice"
@@ -141,7 +169,7 @@ contract NftMarketPlace {
         idToMarketToken[_tokenId].owner = payable(msg.sender);
     }
 
-    function fetchAllTokensOnSale() public view returns (MarketToken[] memory) {
+    function fetchAllTokensOnSale() external view returns (MarketToken[] memory) {
         uint256 currentLastTokenId = _tokenIds.current();
 
         uint256 tokensOnSale;
@@ -162,7 +190,7 @@ contract NftMarketPlace {
         return res;
     }
 
-    function deleteNFT(uint256 _tokenId) public returns (bool) {
+    /*function deleteNFT(uint256 _tokenId) external returns (bool) {
         require(
             msg.sender == idToMarketToken[_tokenId].owner,
             "only the owner of the nft can delete it"
@@ -182,9 +210,9 @@ contract NftMarketPlace {
             }
         }
         return true;
-    }
+    }*/
 
-    function fetchAllMyTokens() public view returns (MarketToken[] memory) {
+    function fetchAllMyTokens() external view returns (MarketToken[] memory) {
         uint256 currentLastTokenId = _tokenIds.current();
 
         uint256 yourTokenCount;
@@ -206,7 +234,7 @@ contract NftMarketPlace {
     }
 
     function fetchTokensMintedByCaller()
-        public
+        external
         view
         returns (MarketToken[] memory)
     {
@@ -230,7 +258,7 @@ contract NftMarketPlace {
         return res;
     }
 
-    function fetchAllTokens() public view returns (MarketToken[] memory) {
+    function fetchAllTokens() external view returns (MarketToken[] memory) {
         uint256 currentLastTokenId = _tokenIds.current();
 
         MarketToken[] memory res = new MarketToken[](currentLastTokenId);
@@ -242,7 +270,5 @@ contract NftMarketPlace {
         return res;
     }
 
-    function getListingPrice() public view returns (uint256) {
-        return listingPrice;
-    }
+   
 }

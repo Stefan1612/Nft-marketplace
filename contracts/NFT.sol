@@ -30,7 +30,7 @@ contract NFT is ERC721URIStorage {
         uint256 currentTokenId = _tokenIds.current();
 
         //ERC721 _mint
-        _mint(msg.sender, currentTokenId);
+        _safeMint(msg.sender, currentTokenId);
 
         //ERC721URIStorage _setTokenURI
         _setTokenURI(currentTokenId, tokenURI);
@@ -42,7 +42,7 @@ contract NFT is ERC721URIStorage {
     }
 
     //sends tokens to address(0)
-    function burn(uint256 tokenId) public virtual {
+    function burn(uint256 tokenId) external virtual {
         require(
             _isApprovedOrOwner(_msgSender(), tokenId),
             "ERC721Burnable: caller is not owner nor approved"
