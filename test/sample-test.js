@@ -134,68 +134,14 @@ describe("NftMarketPlace", function () {
       market.connect(addr2).saleMarketToken(3, 300, nftContractAddress)
     ).to.be.revertedWith("only owner of token can call this method");
 
-    /* let approved = await nft.isApprovedForAll(addr2.address, marketAddress);
-
-     approved = await nft.isApprovedForAll(owner.address, marketAddress);
-    
-    let data = await market.connect(addr2).fetchTokensMintedByCaller();
-
-    data = await market.connect(addr1).fetchAllMyTokens(); */
-
     // https://ethereum.stackexchange.com/questions/117944/why-do-i-keep-receiving-this-error-revert-erc721-transfer-caller-is-not-owner
     await nft.connect(addr2).setApprovalForAll(marketAddress, true);
     await market.connect(addr2).saleMarketToken(1, 420, nftContractAddress);
 
-    /*await expect(market.buyMarketToken(1,nftContractAddress ,{
-    value: 420
-  })).to.be.revertedWith("ERC721: transfer of token that is not own")
- 
-*/
-  });
-});
-
-describe("NftMarketPlace", function () {
-  it("testing the delete function", async function () {
-    //test to receive contract addresses
-    const Market = await ethers.getContractFactory("NftMarketPlace");
-    const market = await Market.deploy();
-    await market.deployed();
-    const marketAddress = market.address;
-
-    const NFT = await ethers.getContractFactory("NFT");
-    const nft = await NFT.deploy(marketAddress);
-    await nft.deployed();
-    const nftContractAddress = nft.address;
-
-    //test for minting
-    await nft.createNFT("https-1");
-
-    await nft.createNFT("https-2");
-
-    await nft.createNFT("https-3");
-
-    //test to receive listing price and auction price
-    let listingPrice = await market.listingPrice();
-    listingPrice = listingPrice.toString();
-
-    //need to work on those tests
-    await market.mintMarketToken(nftContractAddress, {
-      value: listingPrice,
-    });
-
-    await market.mintMarketToken(nftContractAddress, {
-      value: listingPrice,
-    });
-
-    await market.mintMarketToken(nftContractAddress, {
-      value: listingPrice,
-    });
-
-    await market.saleMarketToken(2, 200, nftContractAddress);
-
-    // problem im code below
-    const [owner, addr1, addr2] = await ethers.getSigners();
-    /* 
-    await market.deleteNFT(1); */
+    await expect(
+      market.buyMarketToken(1, nftContractAddress, {
+        value: 420,
+      })
+    );
   });
 });
