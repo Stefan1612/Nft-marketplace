@@ -3,11 +3,8 @@
 ## Status
 - Work in progress
 ### To-do's
-- Rewrite more detailed tests
 - Rewrite the frontend to utilize events
-- Allowance Bug inside contract
 - Host website on netlify
-- Rewrite frontend with MUI instead of Bootstrap
 
 ## Approach
 Running on Mumbai/polygon
