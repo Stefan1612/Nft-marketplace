@@ -23,17 +23,6 @@ describe("NftMarketPlace", function () {
   });
 
   it("Should Mint and trade NFTs", async function () {
-    //test to receive contract addresses
-    /*  const Market = await ethers.getContractFactory("NftMarketPlace");
-    const market = await Market.deploy();
-    await market.deployed();
-    const marketAddress = market.address;
-
-    const NFT = await ethers.getContractFactory("NFT");
-    const nft = await NFT.deploy(marketAddress);
-    await nft.deployed();
-    const nftContractAddress = nft.address; */
-
     //test to receive listing price and auction price
     let listingPrice = await market.listingPrice();
     listingPrice = listingPrice.toString();
