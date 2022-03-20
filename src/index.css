@@ -12,3 +12,26 @@ a:active {
   text-decoration: none;
   color: inherit;
 }
+#pages {
+  margin: 0;
+
+  background: rgb(64, 10, 65);
+  background: linear-gradient(
+    90deg,
+    rgba(64, 10, 65, 1) 0%,
+    rgba(121, 149, 164, 1) 100%
+  );
+  animation: gradientBG 12s ease infinite;
+  background-size: 400% 400%;
+}
+@keyframes gradientBG {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
