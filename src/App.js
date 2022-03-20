@@ -11,6 +11,7 @@ import MintForm from "./Components/MintForm";
 import OwnNfts from "./Components/OwnNfts";
 import FAQ from "./Components/FAQ";
 import Header from "./Components/Header";
+import Footer from "./Components/Footer";
 //abi's
 
 import NFT from "./config/contracts/NFT.json";
@@ -24,7 +25,6 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import BackgroundImage from "./Components/BackgroundImage";
 
 import theme from "./Components/theme/theme";
-//import {ContractAddress[4].NftMarketPlace, nftmarketaddress} from "../config"
 
 // const {utils, BigNumber} = require('ethers');
 
@@ -41,29 +41,27 @@ function App() {
   const provider = new ethers.providers.Web3Provider(window.ethereum);
   const signer = provider.getSigner();
 
-  //view Calls
   //market
-  const eventContract = new ethers.Contract(
-    ContractAddress[4].NFT,
+  const eventContractMarket = new ethers.Contract(
+    ContractAddress[4].NftMarketPlace,
     NftMarketPlace.abi,
     provider
   );
   //nft
   const eventContractNFT = new ethers.Contract(
-    ContractAddress[4].NftMarketPlace,
+    ContractAddress[4].NFT,
     NFT.abi,
     provider
   );
 
   //signer calls
   //market
-  const signerContract = new ethers.Contract(
-    ContractAddress[4].NFT,
+  const signerContractMarket = new ethers.Contract(
+    ContractAddress[4].NftMarketPlace,
     NftMarketPlace.abi,
     signer
   );
   //NFT
-  // const signerContractNFT = new ethers.Contract(ContractAddress[4].NftMarketPlace, NFT.abi, signer);
 
   //side loaded
   useEffect(() => {
@@ -132,7 +130,7 @@ function App() {
   //Loading every NFT function
   //ADD ERROR OPTIONS TRY AND CATCH
   async function loadAll() {
-    let data = await eventContract.fetchAllTokens();
+    let data = await eventContractMarket.fetchAllTokens();
 
     const tokenData = await Promise.all(
       data.map(async (index) => {
@@ -141,8 +139,7 @@ function App() {
 
         //getting the metadata of the nft using the URI
         const meta = await axios.get(tokenUri);
-        // console.log(meta)
-        // DONT FORGET THIS
+
         //change the format to something im familiar with
         let nftData = {
           tokenId: index.tokenId,
@@ -151,9 +148,6 @@ function App() {
           owner: index.owner,
           seller: index.seller,
           minter: index.minter,
-
-          //adding .data to metadata to access image
-          //checkout the metadata
 
           image: meta.data.image,
           name: meta.data.name,
@@ -164,14 +158,12 @@ function App() {
       })
     );
     setNfts(tokenData);
-
-    // console.log(nfts)
   }
 
   const [ownNFTs, setOwnNFTs] = useState([]);
 
   async function loadOwnNFTs() {
-    let data = await signerContract.fetchAllMyTokens();
+    let data = await signerContractMarket.fetchAllMyTokens();
 
     const tokenData = await Promise.all(
       data.map(async (index) => {
@@ -181,7 +173,6 @@ function App() {
         //getting the metadata of the nft using the URI
         const meta = await axios.get(tokenUri);
 
-        // DONT FORGET THIS
         //change the format to something im familiar with
         let nftData = {
           tokenId: index.tokenId,
@@ -190,10 +181,6 @@ function App() {
           owner: index.owner,
           seller: index.seller,
           minter: index.minter,
-
-          //adding .data to metadata to access image
-          //checkout the metadata
-
           image: meta.data.image,
           name: meta.data.name,
           description: meta.data.description,
@@ -208,7 +195,7 @@ function App() {
   const [onSaleNFTs, setOnSaleNFTs] = useState([]);
 
   async function loadOnSaleNFTs() {
-    let data = await signerContract.fetchAllTokensOnSale();
+    let data = await signerContractMarket.fetchAllTokensOnSale();
 
     const tokenData = await Promise.all(
       data.map(async (index) => {
@@ -218,8 +205,6 @@ function App() {
         //getting the metadata of the nft using the URI
         const meta = await axios.get(tokenUri);
 
-        // DONT FORGET THIS
-        //change the format to something im familiar with
         let nftData = {
           tokenId: index.tokenId,
           price: ethers.utils.formatUnits(index.price.toString(), "ether"),
@@ -227,10 +212,6 @@ function App() {
           owner: index.owner,
           seller: index.seller,
           minter: index.minter,
-
-          //adding .data to metadata to access image
-          //checkout the metadata
-
           image: meta.data.image,
           name: meta.data.name,
           description: meta.data.description,
@@ -245,7 +226,7 @@ function App() {
   const [mintedNFTs, setMintedNFTs] = useState([]);
 
   async function loadMintedNFTs() {
-    let data = await signerContract.fetchTokensMintedByCaller();
+    let data = await signerContractMarket.fetchTokensMintedByCaller();
 
     const tokenData = await Promise.all(
       data.map(async (index) => {
@@ -254,9 +235,6 @@ function App() {
 
         //getting the metadata of the nft using the URI
         const meta = await axios.get(tokenUri);
-
-        // DONT FORGET THIS
-        //change the format to something im familiar with
         let nftData = {
           tokenId: index.tokenId,
           price: ethers.utils.formatUnits(index.price.toString(), "ether"),
@@ -264,10 +242,6 @@ function App() {
           owner: index.owner,
           seller: index.seller,
           minter: index.minter,
-
-          //adding .data to metadata to access image
-          //checkout the metadata
-
           image: meta.data.image,
           name: meta.data.name,
           description: meta.data.description,
@@ -285,9 +259,9 @@ function App() {
     id = id.toNumber();
     let price = marketItem.price;
     price = ethers.utils.parseEther(price);
-    let tx = await signerContract.buyMarketToken(
+    let tx = await signerContractMarket.buyMarketToken(
       id,
-      ContractAddress[4].NftMarketPlace,
+      ContractAddress[4].NFT,
       {
         value: price,
       }
@@ -302,7 +276,7 @@ function App() {
   async function sellNFT(marketItem) {
     const signer = provider.getSigner();
     let contract = new ethers.Contract(
-      ContractAddress[4].NFT,
+      ContractAddress[4].NftMarketPlace,
       NftMarketPlace.abi,
       signer
     );
@@ -311,7 +285,7 @@ function App() {
     let tx = await contract.saleMarketToken(
       id,
       previewPriceTwo,
-      ContractAddress[4].NftMarketPlace
+      ContractAddress[4].NFT
     );
     await tx.wait();
     loadOwnNFTs();
@@ -334,7 +308,6 @@ function App() {
   };
 
   //client used to host and upload data, endpoint infura
-  //api
   const client = ipfsHttpClient("https://ipfs.infura.io:5001/api/v0");
 
   //keepin track of URL inserted as image for NFT metadata
@@ -374,7 +347,7 @@ function App() {
       description: formInput.description,
       image: fileURL,
     });
-    //console.log(data)
+
     try {
       const added = await client.add(data);
       const url = `https://ipfs.infura.io/ipfs/${added.path}`;
@@ -389,15 +362,10 @@ function App() {
   async function mintNFT(url) {
     //first step
     const signer = provider.getSigner();
-    let contract = new ethers.Contract(
-      ContractAddress[4].NftMarketPlace,
-      NFT.abi,
-      signer
-    );
+    let contract = new ethers.Contract(ContractAddress[4].NFT, NFT.abi, signer);
     // let tx =
     await contract.createNFT(url);
 
-    //this code might be unnecessary
     /* tx = await tx.wait();
 
      let event = tx.events[0];
@@ -407,16 +375,14 @@ function App() {
 
      let tokenId = value.toNumber(); */
 
-    //const price = ethers.utils.parseUnits(formInput.price, "ether")
-
     //list the item for sale on marketplace
-    let listingPrice = await eventContract.getListingPrice();
+    let listingPrice = await eventContractMarket.getListingPrice();
     listingPrice = listingPrice.toString();
     /*listingPrice = listingPrice.toNumber()
         console.log(listingPrice)*/
 
-    let transaction = await signerContract.mintMarketToken(
-      ContractAddress[4].NftMarketPlace,
+    let transaction = await signerContractMarket.mintMarketToken(
+      ContractAddress[4].NFT,
       {
         value: listingPrice,
       }
@@ -424,7 +390,7 @@ function App() {
     await transaction.wait();
   }
 
-  //Bug
+  /*  //Bug
   //if the user accepts the first but cancels the second transaction the whole code will break
   //!Remove error message when mapping is looking at a deleted NFT!
   async function deletingNFT(marketItem) {
@@ -446,7 +412,7 @@ function App() {
     );
 
     await contract.deleteNFT(id);
-  }
+  } */
 
   function changeFormInputDescription(e) {
     setFormInput({ ...formInput, description: e.target.value });
@@ -458,18 +424,21 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <Box>
-        <Container>
-          <link
-            rel="stylesheet"
-            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
-            integrity="sha512-Fo3rlrZj/k7ujTnHg4CGR2D7kSs0v4LLanw2qksYuRlEzO+tcaEPQogQ0KaoGN26/zrn20ImR1DfuLWnOo7aBA=="
-            crossOrigin="anonymous"
-            referrerPolicy="no-referrer"
-          />
-          <BackgroundImage />
+        <Header />
+        <Box
+          id="background"
+          marginTop={"91vh"}
+          sx={{ backgroundColor: "#212121" }}
+        >
+          <Container>
+            <link
+              rel="stylesheet"
+              href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+              integrity="sha512-Fo3rlrZj/k7ujTnHg4CGR2D7kSs0v4LLanw2qksYuRlEzO+tcaEPQogQ0KaoGN26/zrn20ImR1DfuLWnOo7aBA=="
+              crossOrigin="anonymous"
+              referrerPolicy="no-referrer"
+            />
 
-          <Header />
-          <div id="pages">
             <Routes>
               <Route
                 exact
@@ -487,7 +456,6 @@ function App() {
                   />
                 }
               />
-
               <Route
                 exact
                 path="/MintForm"
@@ -503,7 +471,6 @@ function App() {
                   />
                 }
               />
-
               <Route
                 exact
                 path="/OwnNfts"
@@ -512,27 +479,21 @@ function App() {
                     ownNFTs={ownNFTs}
                     sellNFT={sellNFT}
                     handleChangePrice={handleChangePrice}
-                    deletingNFT={deletingNFT}
                   />
                 }
               />
-
+              {/*deletingNFT={deletingNFT} */}
               <Route
                 exact
                 path="/MintedTokens"
                 element={<MintedTokens mintedNFTs={mintedNFTs} />}
               />
             </Routes>
-          </div>
-          <FAQ></FAQ>
-          <footer id="footer">
-            <i className="fab fa-github">&nbsp;&nbsp;&nbsp; </i>
-            <i className="fab fa-twitter">&nbsp;&nbsp;&nbsp; </i>
-            <i className="fab fa-discord">&nbsp;&nbsp;&nbsp;</i>
-            <i className="fab fa-linkedin-in">&nbsp;&nbsp;&nbsp;</i>
-            <i className="fab fa-youtube">&nbsp;&nbsp;&nbsp;</i>
-          </footer>
-        </Container>
+
+            <FAQ></FAQ>
+            <Footer />
+          </Container>
+        </Box>
       </Box>
     </ThemeProvider>
   );

@@ -21,7 +21,7 @@ const MintForm = (props) => {
             style={{ width: "100%" }}
             placeholder="Name max 14 letters"
             type="text"
-            maxlength="14"
+            maxLength="14"
             onChange={(e) => props.changeFormInputName(e)}
           />
           <br></br>
@@ -30,7 +30,7 @@ const MintForm = (props) => {
             style={{ width: "100%", backgroundColor: "rgb(161, 170, 169)" }}
             placeholder="Description max 70 letters"
             type="text"
-            maxlength="70"
+            maxLength="70"
             onChange={(e) => props.changeFormInputDescription(e)}
           />
           <br></br>

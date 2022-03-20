@@ -1,19 +1,8 @@
 const OwnNfts = (props) => {
   return (
     <div className="row " style={{ paddingTop: "20vh" }}>
-      <h1 className="text-center">Your current owned NFTs</h1>
-      <br></br>
-      <form class="form-inline text-center">
-        <input
-          style={{ margin: "auto", width: "12vw" }}
-          class="form-control mr-sm-2"
-          type="text"
-          placeholder="Search"
-        />
-        <button class="btn btn-outline-success my-2 my-sm-0 " type="submit">
-          Search
-        </button>
-        <i class="fas fa-cat"></i>
+      <form className="form-inline text-center">
+        <i className="fas fa-cat"></i>
       </form>
       <br></br>
       {props.ownNFTs.length === 0 && (

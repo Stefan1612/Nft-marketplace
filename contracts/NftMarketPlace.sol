@@ -270,5 +270,7 @@ contract NftMarketPlace is ReentrancyGuard{
         return res;
     }
 
-   
+   function getListingPrice() external view returns(uint){
+       return listingPrice;
+   }
 }

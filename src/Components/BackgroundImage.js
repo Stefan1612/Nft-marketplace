@@ -39,10 +39,10 @@ const BackgroundImage = () => {
     >
       <Box sx={{ marginLeft: "25vw", color: "white" }}>
         <Typography marginTop={28} component="h1" variant="h1">
-          Ethereum Lottery
+          NFT Marketplace
         </Typography>
         <Typography marginTop={2} component="h2" variant="h2">
-          Running on Kovan!
+          Running on Rinkeby!
         </Typography>
       </Box>
     </Box>
