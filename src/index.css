@@ -15,11 +15,11 @@ a:active {
 #pages {
   margin: 0;
 
-  background: rgb(64, 10, 65);
+  background: rgb(37, 1, 84);
   background: linear-gradient(
     90deg,
-    rgba(64, 10, 65, 1) 0%,
-    rgba(121, 149, 164, 1) 100%
+    rgba(37, 1, 84, 1) 0%,
+    rgba(221, 177, 240, 1) 100%
   );
   animation: gradientBG 12s ease infinite;
   background-size: 400% 400%;

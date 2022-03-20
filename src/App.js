@@ -427,7 +427,7 @@ function App() {
         <Header />
         <Box
           id="background"
-          marginTop={"93vh"}
+          marginTop={"91vh"}
           sx={{ backgroundColor: "#212121" }}
         >
           <Container>
