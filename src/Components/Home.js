@@ -26,21 +26,6 @@ const Home = (props) => {
               <Grid container spacing={4}>
                 {props.onSaleNFTs.map((index) => {
                   return (
-                    /*  <Box key={index.tokenId}>
-                <Container sx={{ marginY: 5 }}>
-                  <Grid container spacing={4}>
-                    <NFTCard
-                      handleUrlChange={props.handleUrlChange}
-                      mintNFT={props.mintNFT}
-                      nfts={props.nfts}
-                      onSaleNFTs={props.onSaleNFTs}
-                      buyNFT={props.buyNFT}
-                      index={index}
-                    />
-                  </Grid>
-                </Container>
-              </Box> */
-
                     <Grid item xs={4} key={index.tokenId}>
                       <Paper elevation={24}>
                         <Box padding={1.5}>
@@ -51,24 +36,32 @@ const Home = (props) => {
                             src={index.image}
                           ></img>
 
-                          <Typography>{index.name}</Typography>
-                          <Typography paddingBottom={"6vh"}>
+                          <Typography component={"p"} variant={"h2"}>
+                            {index.name}
+                          </Typography>
+                          <Typography
+                            paddingBottom={"6vh"}
+                            variant={"body2"}
+                            component={"p"}
+                          >
                             {index.description}
                           </Typography>
-                          <Typography>{index.price} Ether</Typography>
-                          <button
-                            className="btn btn-success"
-                            id="nftBuy"
+
+                          <Typography component={"p"} variant={"h3"}>
+                            {index.price} Ether
+                          </Typography>
+                          <Typography style={{ color: "white" }}>
+                            Current Seller: &nbsp;
+                            {index.owner.substring(0, 5) +
+                              "..." +
+                              index.owner.substring(38)}
+                          </Typography>
+                          <Button
+                            variant={"outlined"}
                             onClick={() => props.buyNFT(index)}
                           >
                             Buy NFT
-                          </button>
-                          <Typography style={{ color: "white" }}>
-                            Connected with: &nbsp;
-                            {props.account.substring(0, 5) +
-                              "..." +
-                              props.account.substring(38)}
-                          </Typography>
+                          </Button>
                         </Box>
                       </Paper>
                     </Grid>
@@ -111,8 +104,6 @@ const Home = (props) => {
             </Box>
           </Container>
         </div>
-
-        <div></div>
       </Box>
     </Box>
   );
