@@ -28,9 +28,9 @@ const MintForm = (props) => {
           Description:
           <textarea
             style={{ width: "100%", backgroundColor: "rgb(161, 170, 169)" }}
-            placeholder="Description max 70 letters"
+            placeholder="Description max 30 letters"
             type="text"
-            maxLength="70"
+            maxLength="30"
             onChange={(e) => props.changeFormInputDescription(e)}
           />
           <br></br>

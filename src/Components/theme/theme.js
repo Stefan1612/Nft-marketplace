@@ -4,7 +4,7 @@ const basicTheme = createTheme({
   palette: {
     mode: "dark",
     primary: {
-      main: "#00e676",
+      main: "#ddb1f0",
     },
   },
   typography: {
@@ -26,6 +26,7 @@ const basicTheme = createTheme({
     },
     h3: {
       fontSize: 22,
+      color: "#ddb1f0",
     },
   },
   shape: {
