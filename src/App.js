@@ -425,76 +425,72 @@ function App() {
     <ThemeProvider theme={theme}>
       <Box>
         <Header />
-        <Box
+        {/*  <Box
           id="background"
           marginTop={"91vh"}
           sx={{ backgroundColor: "#212121" }}
-        >
-          <Container>
-            <link
-              rel="stylesheet"
-              href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
-              integrity="sha512-Fo3rlrZj/k7ujTnHg4CGR2D7kSs0v4LLanw2qksYuRlEzO+tcaEPQogQ0KaoGN26/zrn20ImR1DfuLWnOo7aBA=="
-              crossOrigin="anonymous"
-              referrerPolicy="no-referrer"
-            />
+        > */}
 
-            <Routes>
-              <Route
-                exact
-                path="/"
-                element={
-                  <Home
-                    account={account}
-                    networkChainId={network.chainId}
-                    networkName={network.name}
-                    handleUrlChange={handleUrlChange}
-                    mintNFT={mintNFT}
-                    nfts={nfts}
-                    onSaleNFTs={onSaleNFTs}
-                    buyNFT={buyNFT}
-                  />
-                }
-              />
-              <Route
-                exact
-                path="/MintForm"
-                element={
-                  <MintForm
-                    setFormInput={setFormInput}
-                    formInput={formInput}
-                    onChange={handleUrlChange}
-                    changeFormInputDescription={changeFormInputDescription}
-                    changeFormInputName={changeFormInputName}
-                    fileURL={fileURL}
-                    createMarket={createMarket}
-                  />
-                }
-              />
-              <Route
-                exact
-                path="/OwnNfts"
-                element={
-                  <OwnNfts
-                    ownNFTs={ownNFTs}
-                    sellNFT={sellNFT}
-                    handleChangePrice={handleChangePrice}
-                  />
-                }
-              />
-              {/*deletingNFT={deletingNFT} */}
-              <Route
-                exact
-                path="/MintedTokens"
-                element={<MintedTokens mintedNFTs={mintedNFTs} />}
-              />
-            </Routes>
+        <link
+          rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+          integrity="sha512-Fo3rlrZj/k7ujTnHg4CGR2D7kSs0v4LLanw2qksYuRlEzO+tcaEPQogQ0KaoGN26/zrn20ImR1DfuLWnOo7aBA=="
+          crossOrigin="anonymous"
+          referrerPolicy="no-referrer"
+        />
 
-            <FAQ></FAQ>
-            <Footer />
-          </Container>
-        </Box>
+        <Routes>
+          <Route
+            exact
+            path="/"
+            element={
+              <Home
+                account={account}
+                networkChainId={network.chainId}
+                networkName={network.name}
+                handleUrlChange={handleUrlChange}
+                mintNFT={mintNFT}
+                nfts={nfts}
+                onSaleNFTs={onSaleNFTs}
+                buyNFT={buyNFT}
+              />
+            }
+          />
+          <Route
+            exact
+            path="/MintForm"
+            element={
+              <MintForm
+                setFormInput={setFormInput}
+                formInput={formInput}
+                onChange={handleUrlChange}
+                changeFormInputDescription={changeFormInputDescription}
+                changeFormInputName={changeFormInputName}
+                fileURL={fileURL}
+                createMarket={createMarket}
+              />
+            }
+          />
+          <Route
+            exact
+            path="/OwnNfts"
+            element={
+              <OwnNfts
+                ownNFTs={ownNFTs}
+                sellNFT={sellNFT}
+                handleChangePrice={handleChangePrice}
+              />
+            }
+          />
+          {/*deletingNFT={deletingNFT} */}
+          <Route
+            exact
+            path="/MintedTokens"
+            element={<MintedTokens mintedNFTs={mintedNFTs} />}
+          />
+        </Routes>
       </Box>
+      {/*    </Box> */}
     </ThemeProvider>
   );
 }
