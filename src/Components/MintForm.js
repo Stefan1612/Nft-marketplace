@@ -135,6 +135,8 @@ const MintForm = (props) => {
             <Typography>Choose the File to upload as NFT</Typography>
 
             <Input type="file" name="Asset" onChange={props.onChange} />
+            <br></br>
+            <br></br>
             <Button variant={"contained"} onClick={props.createMarket}>
               Mint NFT
             </Button>
