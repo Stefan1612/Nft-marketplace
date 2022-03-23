@@ -3,7 +3,6 @@
 ## Status
 - Work in progress
 ### To-do's
-- Rewrite the frontend to utilize events
 - Host website on netlify
 
 ## Approach
