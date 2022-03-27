@@ -25,20 +25,6 @@ A NFT Marketplace running currently on Rinkeby. Let's you mint, sell and buy NFT
 - [Node.js](https://nodejs.org/en/)
 
 ## Fundamental Issues
-
 ## Ways to solve the problems
-
 ## Technical Issues
-
-  
-2. The front-end is a mess due to me not utilizing the solidity events. 
-  Callback hell:
-  - Hard to read
-  - Hard to update
-  - Inefficient
-
 ## Ways to solve the problems
-
-
-2) I'll probaly redo the whole front-end utilizing the events and desgining with mui.
-
