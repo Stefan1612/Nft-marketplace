@@ -7,8 +7,7 @@
 
 ## Approach
 Running on Mumbai/polygon
-Nft Marketplace which allows you to trade, mint, sell, auction burn NFT's.
-Using polygon's sidechain to reduce gas cost of all transactions mentioned above.
+A NFT Marketplace running currently on Rinkeby. Let's you mint, sell and buy NFT's. During the minting we store the Metadata on IPFS and only store the TokenURI on-chain.
 ## Stack
 
 ### Blockchain Technologies
