@@ -19,12 +19,14 @@ A NFT Marketplace running currently on Rinkeby. Let's you mint, sell and buy NFT
 - [React](https://reactjs.org/)
 - [ethers.js](https://docs.ethers.io/v5/)
 - [MUI: React UI Library](https://mui.com/)
+- [Bootstrap]
 
 ## Backend
 - [Netlify](https://www.netlify.com/): Website host
 - [Node.js](https://nodejs.org/en/)
 
 ## Fundamental Issues
-## Ways to solve the problems
+## Solution
 ## Technical Issues
-## Ways to solve the problems
+## Solution
+## Challenges
