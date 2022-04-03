@@ -10,7 +10,10 @@ import {
 import Footer from "./Footer";
 const OwnNfts = (props) => {
   return (
-    <Box id="background" sx={{ backgroundColor: "#212121" }}>
+    <Box
+      id="background"
+      sx={{ backgroundColor: "#212121", minHeight: "100vh" }}
+    >
       <Container>
         <Box paddingTop={"20vh"} marginBottom={"5vh"}>
           <Box id="pages" paddingBottom={"10vh"}>
