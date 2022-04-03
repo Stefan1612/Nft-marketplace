@@ -32,3 +32,5 @@ A NFT Marketplace running currently on Rinkeby. Let's you mint, sell and buy NFT
 ## Technical Issues
 ## Solution
 ## Challenges
+- Handling Allowance
+- IPFS upload
