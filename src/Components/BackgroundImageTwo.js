@@ -1,6 +1,7 @@
 import NET from "vanta/dist/vanta.net.min";
 import { Box, Typography } from "@mui/material";
 import React, { useState, useEffect, useRef } from "react";
+import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 const BackgroundImage = () => {
   const [vantaEffect, setVantaEffect] = useState(0);
   const myRef = useRef(null);
@@ -36,7 +37,18 @@ const BackgroundImage = () => {
         position: "absolute",
       }}
       ref={myRef}
-    ></Box>
+    >
+      <Box
+        sx={{
+          color: "white",
+          paddingLeft: "5px",
+          marginTop: "6vh",
+        }}
+      >
+        <ArrowUpwardIcon sx={{ fontSize: 60 }} />
+        Check our Services!
+      </Box>
+    </Box>
   );
 };
 

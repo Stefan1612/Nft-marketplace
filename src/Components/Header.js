@@ -15,7 +15,7 @@ import AccountCircle from "@mui/icons-material/AccountCircle";
 import MailIcon from "@mui/icons-material/Mail";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import MoreIcon from "@mui/icons-material/MoreVert";
-
+import Button from "@mui/material/Button";
 import LogoSimpleBlock from "./assets/LogoMakr-9qZ27k.png";
 
 // menu
@@ -27,8 +27,10 @@ import Popper from "@mui/material/Popper";
 
 import MenuList from "@mui/material/MenuList";
 import Stack from "@mui/material/Stack";
+
 //
 import { Link } from "react-router-dom";
+import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
   borderRadius: theme.shape.borderRadius,
@@ -69,7 +71,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-export default function PrimarySearchAppBar() {
+export default function PrimarySearchAppBar(props) {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
 
@@ -359,6 +361,20 @@ export default function PrimarySearchAppBar() {
       </AppBar>
       {renderMobileMenu}
       {renderMenu}
+      {/*  {props.showButton === true && 
+      <Box sx={{ marginLeft: "25vw" }} marginTop={34}>
+        <Button variant="contained" onClick={() => console.log("Hello")}>
+          <a href="#">Enter</a>
+        </Button>
+        <Button
+          variant="outlined"
+          sx={{ marginLeft: "5px" }}
+          onClick={(e) => props.FirstLoadGettingAccount()}
+        >
+          Metamask
+        </Button>
+      </Box>
+} */}{" "}
     </Box>
   );
 }

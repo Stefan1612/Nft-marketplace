@@ -453,6 +453,7 @@ function App() {
                 nfts={nfts}
                 onSaleNFTs={onSaleNFTs}
                 buyNFT={buyNFT}
+                FirstLoadGettingAccount={FirstLoadGettingAccount}
               />
             }
           />
