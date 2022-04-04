@@ -15,7 +15,7 @@ import AccountCircle from "@mui/icons-material/AccountCircle";
 import MailIcon from "@mui/icons-material/Mail";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import MoreIcon from "@mui/icons-material/MoreVert";
-import Button from "@mui/material/Button";
+/* import Button from "@mui/material/Button"; */
 import LogoSimpleBlock from "./assets/LogoMakr-9qZ27k.png";
 
 // menu
@@ -30,7 +30,7 @@ import Stack from "@mui/material/Stack";
 
 //
 import { Link } from "react-router-dom";
-import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
+
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
   borderRadius: theme.shape.borderRadius,

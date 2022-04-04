@@ -1,8 +1,8 @@
 import NET from "vanta/dist/vanta.net.min";
-import { Box, Typography, Button } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import React, { useState, useEffect, useRef } from "react";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
-import ArrowUp from "./ArrowUp";
+
 const BackgroundImage = (props) => {
   const [vantaEffect, setVantaEffect] = useState(0);
   const myRef = useRef(null);

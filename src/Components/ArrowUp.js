@@ -1,6 +1,6 @@
 import React from "react";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
-import { Box, Typography, Button } from "@mui/material";
+import { Box } from "@mui/material";
 const ArrowUp = () => {
   return (
     <Box

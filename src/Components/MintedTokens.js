@@ -1,4 +1,4 @@
-import { Typography, Box, Button, Paper, Grid, Container } from "@mui/material";
+import { Typography, Box, Paper, Grid, Container } from "@mui/material";
 import Footer from "./Footer";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 const MintedTokens = (props) => {

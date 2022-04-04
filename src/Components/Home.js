@@ -3,7 +3,7 @@ import BackgroundImage from "./BackgroundImage";
 import FAQ from "./FAQ";
 import Footer from "./Footer";
 import Buttons from "./Buttons";
-import ArrowUp from "./ArrowUp";
+
 const Home = (props) => {
   const showButton = true;
   return (

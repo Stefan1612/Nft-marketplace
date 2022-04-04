@@ -2,16 +2,14 @@ import "./App.css";
 
 import React, { useState, useEffect } from "react";
 import { Route, Routes } from "react-router-dom";
-import { Container, Box, ThemeProvider } from "@mui/material";
+import { Box, ThemeProvider } from "@mui/material";
 //Components
 
 import Home from "./Components/Home";
 import MintedTokens from "./Components/MintedTokens";
 import MintForm from "./Components/MintForm";
 import OwnNfts from "./Components/OwnNfts";
-import FAQ from "./Components/FAQ";
 import Header from "./Components/Header";
-import Footer from "./Components/Footer";
 //abi's
 
 import NFT from "./config/contracts/NFT.json";
@@ -22,7 +20,6 @@ import { ethers } from "ethers";
 import axios from "axios";
 import { create as ipfsHttpClient } from "ipfs-http-client";
 import "bootstrap/dist/css/bootstrap.min.css";
-import BackgroundImage from "./Components/BackgroundImage";
 
 import theme from "./Components/theme/theme";
 
@@ -271,8 +268,6 @@ function App() {
     loadOnSaleNFTs();
   }
 
-  //BUG
-  //looks like you can only after you minted a NFT
   async function sellNFT(marketItem) {
     const signer = provider.getSigner();
     let contract = new ethers.Contract(
@@ -280,8 +275,14 @@ function App() {
       NftMarketPlace.abi,
       signer
     );
+    const nftContract = new ethers.Contract(
+      ContractAddress[4].NFT,
+      NFT.abi,
+      signer
+    );
     let id = marketItem.tokenId;
     id = id.toNumber();
+    await nftContract.setApprovalForAll(ContractAddress[4].NftMarketPlace);
     let tx = await contract.saleMarketToken(
       id,
       previewPriceTwo,
