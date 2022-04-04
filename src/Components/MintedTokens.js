@@ -1,8 +1,21 @@
-import { Typography, Box, Button, Paper, Grid, Container } from "@mui/material";
+import { Typography, Box, Paper, Grid, Container } from "@mui/material";
 import Footer from "./Footer";
+import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 const MintedTokens = (props) => {
   return (
-    <Box id="background" sx={{ backgroundColor: "#212121" }}>
+    <Box
+      id="background"
+      sx={{ backgroundColor: "#212121", minHeight: "100vh" }}
+    >
+      <Box
+        sx={{
+          color: "white",
+          paddingLeft: "5px",
+        }}
+      >
+        <ArrowUpwardIcon sx={{ fontSize: 60 }} />
+        Check our Services!
+      </Box>
       <Container>
         <Box paddingTop={"20vh"} marginBottom={"5vh"}>
           <Box id="pages" paddingBottom={"10vh"}>

@@ -1,9 +1,9 @@
-const { expect, assert } = require("chai");
+const { expect /* , assert */ } = require("chai");
 const { ethers } = require("hardhat");
-const { utils, BigNumber } = require("ethers");
+/* const { utils, BigNumber } = require("ethers"); */
 
 const toWei = (num) => ethers.utils.parseEther(num.toString());
-const fromWei = (num) => ethers.utils.formatEther(num);
+/* const fromWei = (num) => ethers.utils.formatEther(num); */
 
 describe("NftMarketPlace", function () {
   let market;

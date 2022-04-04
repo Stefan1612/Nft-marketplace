@@ -1,7 +1,9 @@
 import NET from "vanta/dist/vanta.net.min";
 import { Box, Typography } from "@mui/material";
 import React, { useState, useEffect, useRef } from "react";
-const BackgroundImage = () => {
+import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
+
+const BackgroundImage = (props) => {
   const [vantaEffect, setVantaEffect] = useState(0);
   const myRef = useRef(null);
   useEffect(() => {
@@ -26,24 +28,36 @@ const BackgroundImage = () => {
   }, [vantaEffect]);
 
   return (
-    <Box
-      sx={{
-        minHeight: "100%",
-        top: 0,
-        left: 0,
-        right: 0,
-        zIndex: -1,
-        position: "absolute",
-      }}
-      ref={myRef}
-    >
-      <Box sx={{ marginLeft: "25vw", color: "white" }}>
-        <Typography marginTop={28} component="h1" variant="h1">
-          NFT Marketplace
-        </Typography>
-        <Typography marginTop={2} component="h2" variant="h2">
-          Running on Rinkeby!
-        </Typography>
+    <Box>
+      <Box
+        sx={{
+          minHeight: "100%",
+          top: 0,
+          left: 0,
+          right: 0,
+          zIndex: -1,
+          position: "absolute",
+        }}
+        ref={myRef}
+      >
+        <Box
+          sx={{
+            color: "white",
+            paddingLeft: "5px",
+            marginTop: "6vh",
+          }}
+        >
+          <ArrowUpwardIcon sx={{ fontSize: 60 }} />
+          Check our Services!
+        </Box>
+        <Box sx={{ marginLeft: "25vw", color: "white" }}>
+          <Typography marginTop={13} component="h1" variant="h1">
+            NFT Marketplace
+          </Typography>
+          <Typography marginTop={2} component="h2" variant="h2">
+            Running on Rinkeby!
+          </Typography>
+        </Box>
       </Box>
     </Box>
   );

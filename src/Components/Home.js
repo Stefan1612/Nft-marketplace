@@ -2,12 +2,20 @@ import { Typography, Box, Button, Paper, Grid, Container } from "@mui/material";
 import BackgroundImage from "./BackgroundImage";
 import FAQ from "./FAQ";
 import Footer from "./Footer";
+import Buttons from "./Buttons";
+
 const Home = (props) => {
+  const showButton = true;
   return (
     <Box id="background" marginTop={"91vh"} sx={{ backgroundColor: "#212121" }}>
       <Container>
         <Box>
+          <Buttons
+            FirstLoadGettingAccount={props.FirstLoadGettingAccount}
+            showButton={showButton}
+          />
           <BackgroundImage />
+
           <Box paddingBottom={"10vh"} />
           <Box id="pages" paddingBottom={"10vh"}>
             <form className="form-inline text-center">
