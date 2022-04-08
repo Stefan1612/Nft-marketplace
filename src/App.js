@@ -282,7 +282,10 @@ function App() {
     );
     let id = marketItem.tokenId;
     id = id.toNumber();
-    await nftContract.setApprovalForAll(ContractAddress[4].NftMarketPlace);
+    await nftContract.setApprovalForAll(
+      ContractAddress[4].NftMarketPlace,
+      true
+    );
     let tx = await contract.saleMarketToken(
       id,
       previewPriceTwo,
