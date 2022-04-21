@@ -1,29 +1,35 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.7;
 
-//random Number oracle
-//import "@chainlink/contracts/src/v0.8/VRFConsumerBase.sol";
-
+// @notice Counter Library to keep track of TokenID
 import "@openzeppelin/contracts/utils/Counters.sol";
 
+// @notice debugging tool
 import "hardhat/console.sol";
 
-// to get the transferFrom method
+// @dev to get the transferFrom method
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 
+// @notice security
+// @dev security against transactions with multiple requests
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
-// security against transactions for multiple requests
 
+// @notice Marketplace contract
 contract NftMarketPlace is ReentrancyGuard{
+
+    // @notice fee to list a NFT on the marketplace
     uint256 constant public listingPrice = 0.002 ether;
 
+    // @notice enabling counter
+    // @dev making use of counter library for Counters.Counter
     using Counters for Counters.Counter;
 
+    // @notice keeping track of tokenID 
     Counters.Counter private _tokenIds;
-    Counters.Counter private _tokensSold;
-
-    // Market Token that gets minted every time someone mints on our market
+   
+    // @notice Market Token that gets minted every time someone mints on our market
+    // @dev struct representing our MarketToken and its values at any given time
     struct MarketToken {
         address nftContractAddress;
         uint256 tokenId;
@@ -34,17 +40,23 @@ contract NftMarketPlace is ReentrancyGuard{
         address minter;
     }
 
+    // @notice indexing from ID to the associated market Token
+    // @dev mapping from ID to associated market Token
     mapping(uint256 => MarketToken) public idToMarketToken;
 
+    // @notice profits of the contract from "listingPrice" fees
     uint256 private profits;
 
+    // @notice contract deployer
     address immutable public owner;
 
-    
+    // @notice setting owner to contract deployer
     constructor() {
         owner = payable(msg.sender);
     }
 
+    // @notice signal used to update the website in real time after mint
+    // @dev event to update front-end after market Item creating
     event marketItemCreated(
         address indexed nftContractAddress,
         uint256 indexed tokenId,
@@ -54,6 +66,8 @@ contract NftMarketPlace is ReentrancyGuard{
         address seller,
         address minter
     );
+    // @notice signal used to update the website in real time after mint
+    // @dev event to update front-end after market Item creating
     event marketItemOnSale(
         address indexed nftContractAddress,
         uint256 tokenId,
@@ -63,6 +77,8 @@ contract NftMarketPlace is ReentrancyGuard{
         address indexed seller,
         address minter
     );
+    // @notice signal used to update the website in real time after mint
+    // @dev event to update front-end after market Item creating
     event marketItemBought(
         address indexed nftContractAddress,
         uint256 tokenId,
@@ -173,7 +189,7 @@ contract NftMarketPlace is ReentrancyGuard{
         uint256 currentLastTokenId = _tokenIds.current();
 
         uint256 tokensOnSale;
-
+        // 
         for (uint256 i = 1; i <= currentLastTokenId; i++) {
             if (idToMarketToken[i].onSale == true) {
                 tokensOnSale += 1;
