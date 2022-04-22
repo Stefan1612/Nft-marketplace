@@ -314,7 +314,7 @@ function App() {
   //client used to host and upload data, endpoint infura
   const client = ipfsHttpClient("https://ipfs.infura.io:5001/api/v0");
 
-  //keepin track of URL inserted as image for NFT metadata
+  //keeping track of URL inserted as image for NFT metadata
   const [fileURL, setFileURL] = useState(null);
   const [formInput, setFormInput] = useState({ name: "", description: "" });
 
