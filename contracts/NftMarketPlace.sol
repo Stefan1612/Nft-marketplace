@@ -166,11 +166,16 @@ contract NftMarketPlace is ReentrancyGuard{
     }
 
     // @notice buy NFT
-    // @dev 
+    // @dev buy market Token which is currently up for sale
+    // @param
+    /* token ID of market Token chosen to be bought,
+       contract address of NFT chosen to be bought
+    */ 
     function buyMarketToken(uint256 _tokenId, address _nftContractAddress)
         external
         payable nonReentrant 
     {   
+        // @dev require existing ID
         require(_tokenId > 0, "TokenId must be over 0");
         require(
             msg.value == idToMarketToken[_tokenId].price,
@@ -182,36 +187,44 @@ contract NftMarketPlace is ReentrancyGuard{
         );
         require(
             msg.sender != idToMarketToken[_tokenId].owner,
-            "You cannot buy of yourself (atleast not with the same address"
+            "You cannot buy from yourself (atleast not with the same address)"
         );
 
        
-
+        // @dev transaferring NFT created in given address from this marketplace to the msg.sender (buyer)
         IERC721(_nftContractAddress).transferFrom(
             address(this),
             msg.sender,
             _tokenId
         );
 
+        // @dev transferring the eth from contract (provided by buyer) to the seller of the nft
         payable(idToMarketToken[_tokenId].seller).transfer(msg.value);
 
+        // @dev update the state of bought market Token
         idToMarketToken[_tokenId].price = 0;
         idToMarketToken[_tokenId].onSale = false;
         idToMarketToken[_tokenId].owner = payable(msg.sender);
     }
 
+    // @notice getting all tokens which are currently up for sale
+    // @returns array of Market Tokens currently up for sale
     function fetchAllTokensOnSale() external view returns (MarketToken[] memory) {
+
+        // @dev saving current ID to save some gas
         uint256 currentLastTokenId = _tokenIds.current();
 
         uint256 tokensOnSale;
-        // 
+        // @dev loop to get the number of tokens on sale
         for (uint256 i = 1; i <= currentLastTokenId; i++) {
             if (idToMarketToken[i].onSale == true) {
                 tokensOnSale += 1;
             }
         }
+        // @dev creating a memory array with the length of num of tokens on sale
         MarketToken[] memory res = new MarketToken[](tokensOnSale);
         uint256 count = 0;
+        // @dev 
         for (uint256 i = 1; i <= currentLastTokenId; i++) {
             if (idToMarketToken[i].onSale == true) {
                 res[count] = idToMarketToken[i];

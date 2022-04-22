@@ -99,7 +99,7 @@ describe("NftMarketPlace", function () {
         value: 200,
       })
     ).to.be.revertedWith(
-      "You cannot buy of yourself (atleast not with the same address"
+      "You cannot buy from yourself (atleast not with the same address)"
     );
 
     // connecting with a different address buying a token
