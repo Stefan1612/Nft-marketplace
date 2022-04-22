@@ -394,9 +394,7 @@ function App() {
     await transaction.wait();
   }
 
-  /*  //Bug
-  //if the user accepts the first but cancels the second transaction the whole code will break
-  //!Remove error message when mapping is looking at a deleted NFT!
+  /*  
   async function deletingNFT(marketItem) {
     const signer = provider.getSigner();
     let contract = new ethers.Contract(
