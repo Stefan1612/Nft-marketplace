@@ -221,10 +221,10 @@ contract NftMarketPlace is ReentrancyGuard{
                 tokensOnSale += 1;
             }
         }
-        // @dev creating a memory array with the length of num of tokens on sale
+        // @dev creating a memory array with the length of num "of tokens on sale"
         MarketToken[] memory res = new MarketToken[](tokensOnSale);
         uint256 count = 0;
-        // @dev 
+        // @dev updating the memory array with all market tokens with onSale == true
         for (uint256 i = 1; i <= currentLastTokenId; i++) {
             if (idToMarketToken[i].onSale == true) {
                 res[count] = idToMarketToken[i];
@@ -255,19 +255,23 @@ contract NftMarketPlace is ReentrancyGuard{
         }
         return true;
     }*/
-
+    // @notice getting all tokens which currently belong to msg.sender
+    // @returns array of Market Tokens which currently belong to msg.sender
     function fetchAllMyTokens() external view returns (MarketToken[] memory) {
+        // @dev saving current ID to save some gas
         uint256 currentLastTokenId = _tokenIds.current();
 
         uint256 yourTokenCount;
-
+        // @dev loop to get the number of tokens currently belonging to msg.sender
         for (uint256 i = 1; i <= currentLastTokenId; i++) {
             if (idToMarketToken[i].owner == msg.sender) {
                 yourTokenCount += 1;
             }
         }
+        // @dev creating a memory array with the length of num "of tokens belonging to msg.sender"
         MarketToken[] memory res = new MarketToken[](yourTokenCount);
         uint256 count = 0;
+        // @dev updating the memory array with all market tokens with onSale == true
         for (uint256 i = 1; i <= currentLastTokenId; i++) {
             if (idToMarketToken[i].owner == msg.sender) {
                 res[count] = idToMarketToken[i];
@@ -276,23 +280,27 @@ contract NftMarketPlace is ReentrancyGuard{
         }
         return res;
     }
-
+    // @notice getting all tokens which got minted by the caller
+    // @returns array of Market Tokens which got minted by the caller
     function fetchTokensMintedByCaller()
         external
         view
         returns (MarketToken[] memory)
-    {
+    {   
+        // @dev saving current ID to save some gas
         uint256 currentLastTokenId = _tokenIds.current();
 
         uint256 yourMintedTokens;
-
+        // @dev loop to get the number of tokens minted by caller
         for (uint256 i = 1; i <= currentLastTokenId; i++) {
             if (idToMarketToken[i].minter == msg.sender) {
                 yourMintedTokens += 1;
             }
         }
+        // @dev creating a memory array with the length of num "minted by caller"
         MarketToken[] memory res = new MarketToken[](yourMintedTokens);
         uint256 count = 0;
+        // @dev updating the memory array with all market tokens which are minted by the caller
         for (uint256 i = 1; i <= currentLastTokenId; i++) {
             if (idToMarketToken[i].minter == msg.sender) {
                 res[count] = idToMarketToken[i];
@@ -301,7 +309,8 @@ contract NftMarketPlace is ReentrancyGuard{
         }
         return res;
     }
-
+    // @notice returns all market tokens
+    // @returns array of all market tokens
     function fetchAllTokens() external view returns (MarketToken[] memory) {
         uint256 currentLastTokenId = _tokenIds.current();
 
@@ -314,7 +323,8 @@ contract NftMarketPlace is ReentrancyGuard{
         return res;
     }
 
-   function getListingPrice() external view returns(uint){
-       return listingPrice;
-   }
+    // @returns listing price
+    function getListingPrice() external view returns(uint){
+        return listingPrice;
+    }
 }
