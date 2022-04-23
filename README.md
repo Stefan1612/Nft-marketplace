@@ -35,14 +35,6 @@ A NFT Marketplace running currently on Rinkeby. Let's you mint, sell and buy NFT
 - [Netlify](https://www.netlify.com/): Website host
 - [Node.js](https://nodejs.org/en/)
 
-## Fundamental Issues
-- None
-## Solution
-- None
-## Technical Issues
-- None
-## Solution
-- None
 ## Challenges
 - Handling Allowance
 - IPFS upload
