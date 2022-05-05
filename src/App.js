@@ -35,8 +35,22 @@ function App() {
   const [nfts, setNfts] = useState([]);
 
   //provider and signer
-  const provider = new ethers.providers.Web3Provider(window.ethereum);
-  const signer = provider.getSigner();
+  let provider;
+
+  if (window.ethereum) {
+    provider = new ethers.providers.Web3Provider(window.ethereum);
+  }
+  let signer;
+  if (window.ethereum) {
+    signer = provider.getSigner();
+  }
+
+  // infuraProvider
+
+  const infuraProvider = new ethers.providers.InfuraProvider("rinkeby", {
+    projectId: process.env.REACT_APP_PROJECT_ID,
+    projectSecret: process.env.REACT_APP_PROJECT_SECRET,
+  });
 
   //market
   const eventContractMarket = new ethers.Contract(
@@ -50,7 +64,16 @@ function App() {
     NFT.abi,
     provider
   );
-
+  const eventContractMarketInfura = new ethers.Contract(
+    ContractAddress[4].NftMarketPlace,
+    NftMarketPlace.abi,
+    infuraProvider
+  );
+  const eventContractNFTInfura = new ethers.Contract(
+    ContractAddress[4].NFT,
+    NFT.abi,
+    infuraProvider
+  );
   //signer calls
   //market
   const signerContractMarket = new ethers.Contract(
@@ -62,12 +85,15 @@ function App() {
 
   //side loaded
   useEffect(() => {
-    FirstLoadGettingAccount();
-    gettingNetworkNameChainId();
-    loadAll();
-    loadOwnNFTs();
-    loadMintedNFTs();
-    loadOnSaleNFTs(); // eslint-disable-next-line react-hooks/exhaustive-deps
+    loadOnSaleNFTs();
+    if (provider) {
+      FirstLoadGettingAccount(); // user provider
+      gettingNetworkNameChainId(); // user provider
+      /*  loadAll(); */
+      loadOwnNFTs(); // user provider
+      loadMintedNFTs(); // user provider
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   //side loaded
@@ -85,10 +111,12 @@ function App() {
 
   //on chain change
   useEffect(() => {
-    window.ethereum.on("chainChanged", handleChainChanged);
-    return () => {
-      window.ethereum.removeListener("chainChanged", handleChainChanged);
-    }; // eslint-disable-next-line react-hooks/exhaustive-deps
+    if (provider) {
+      window.ethereum.on("chainChanged", handleChainChanged);
+      return () => {
+        window.ethereum.removeListener("chainChanged", handleChainChanged);
+      };
+    } // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function handleChainChanged(_chainId) {
@@ -98,10 +126,15 @@ function App() {
 
   //on account change
   useEffect(() => {
-    window.ethereum.on("accountsChanged", handleAccountsChanged);
-    return () => {
-      window.ethereum.removeListener("accountsChanged", handleAccountsChanged);
-    }; // eslint-disable-next-line react-hooks/exhaustive-deps
+    if (provider) {
+      window.ethereum.on("accountsChanged", handleAccountsChanged);
+      return () => {
+        window.ethereum.removeListener(
+          "accountsChanged",
+          handleAccountsChanged
+        );
+      };
+    } // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // For now, 'eth_accounts' will continue to always return an array
@@ -126,13 +159,15 @@ function App() {
 
   //Loading every NFT function
   //ADD ERROR OPTIONS TRY AND CATCH
-  async function loadAll() {
-    let data = await eventContractMarket.fetchAllTokens();
+  /*  async function loadAll() {
+    let data = await eventContractMarketInfura.fetchAllTokens();
 
     const tokenData = await Promise.all(
       data.map(async (index) => {
         //getting the TokenURI using the erc721uri method from our nft contract
-        const tokenUri = await eventContractNFT.tokenURI(index.tokenId);
+        const tokenUri = await eventContractMarketInfura.tokenURI(
+          index.tokenId
+        );
 
         //getting the metadata of the nft using the URI
         const meta = await axios.get(tokenUri);
@@ -155,7 +190,7 @@ function App() {
       })
     );
     setNfts(tokenData);
-  }
+  } */
 
   const [ownNFTs, setOwnNFTs] = useState([]);
 
@@ -192,12 +227,12 @@ function App() {
   const [onSaleNFTs, setOnSaleNFTs] = useState([]);
 
   async function loadOnSaleNFTs() {
-    let data = await signerContractMarket.fetchAllTokensOnSale();
+    let data = await eventContractMarketInfura.fetchAllTokensOnSale();
 
     const tokenData = await Promise.all(
       data.map(async (index) => {
         //getting the TokenURI using the erc721uri method from our nft contract
-        const tokenUri = await eventContractNFT.tokenURI(index.tokenId);
+        const tokenUri = await eventContractNFTInfura.tokenURI(index.tokenId);
 
         //getting the metadata of the nft using the URI
         const meta = await axios.get(tokenUri);
