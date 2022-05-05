@@ -32,7 +32,7 @@ function App() {
 
   //handle State
   const [account, setAccount] = useState("");
-  const [nfts, setNfts] = useState([]);
+  // const [nfts, setNfts] = useState([]);
 
   //provider and signer
   let provider;
@@ -487,7 +487,7 @@ function App() {
                 networkName={network.name}
                 handleUrlChange={handleUrlChange}
                 mintNFT={mintNFT}
-                nfts={nfts}
+                /* nfts={nfts} */
                 onSaleNFTs={onSaleNFTs}
                 buyNFT={buyNFT}
                 FirstLoadGettingAccount={FirstLoadGettingAccount}
