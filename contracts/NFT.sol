@@ -11,6 +11,10 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 // keeping state of tokenURI
 import "@openzeppelin/contracts/utils/Counters.sol";
 
+// ERROR MESSAGES
+// caller is not the owner nor has approval for tokenID
+error NotOwner(address sender, uint i);
+
 // CONTRACTS
 /// @title NFT contract for "Ape Family"
 /// @author Stefan Lehmann/Stefan1612/SimpleBlock
@@ -22,42 +26,51 @@ contract NFT is ERC721URIStorage {
     using Counters for Counters.Counter;
 
     /// @notice keeping track of tokenIds
-    Counters.Counter private _tokenIds;
+    Counters.Counter private s_tokenIds;
 
     /// @notice address of the marketplace I want the this type of NFT to interact with
-    address private marketplace;
+    address private immutable i_marketplace;
 
     /// @notice setting name, symbol to fixed values
     constructor(address _marketplace) ERC721("Ape Family", "APF") {
-        marketplace = _marketplace;
+        i_marketplace = _marketplace;
     }
 
     /// @notice mint function(createNFT)
-    /// @return  sad
+    /// @return current tokenID
     function createNFT(string memory tokenURI) public returns (uint256) {
-        //incrementing the id everytime after minting
-        _tokenIds.increment();
-        //unique current ID
-        uint256 currentTokenId = _tokenIds.current();
+        // incrementing the id everytime after minting
+        s_tokenIds.increment();
+        // unique current ID
+        uint256 currentTokenId = s_tokenIds.current();
 
-        //ERC721 _mint
+        // ERC721 _mint
         _safeMint(msg.sender, currentTokenId);
 
-        //ERC721URIStorage _setTokenURI
+        // ERC721URIStorage _setTokenURI
         _setTokenURI(currentTokenId, tokenURI);
 
-        //ERC721 setApprovalForAll
-        setApprovalForAll(marketplace, true);
+        // ERC721 setApprovalForAll to give marketplace access 
+        setApprovalForAll(i_marketplace, true);
 
         return currentTokenId;
     }
 
-    //sends tokens to address(0)
+    /// @notice burns NFT's
+    /// @dev sends token to address(0)
     function burn(uint256 tokenId) external virtual {
-        require(
+
+        // In case require statements get more gas efficient in the future
+       /*  require(
             _isApprovedOrOwner(_msgSender(), tokenId),
             "ERC721Burnable: caller is not owner nor approved"
-        );
+        ); */
+
+        if( !_isApprovedOrOwner(_msgSender(), tokenId)){
+            revert NotOwner(msg.sender, tokenId);
+        }
+
+        // sends token to address(0)
         _burn(tokenId);
     }
 }
