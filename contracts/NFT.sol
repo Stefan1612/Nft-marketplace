@@ -38,7 +38,7 @@ contract NFT is ERC721URIStorage {
 
     /// @notice mint function(createNFT)
     /// @return current tokenID
-    function createNFT(string memory tokenURI) public returns (uint256) {
+    function createNFT(string memory tokenURI) external returns (uint256) {
         // incrementing the id everytime after minting
         s_tokenIds.increment();
         // unique current ID

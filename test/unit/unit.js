@@ -24,7 +24,7 @@ describe("NftMarketPlace", function () {
 
   it("Should Mint and trade NFTs", async function () {
     //test to receive listing price and auction price
-    let listingPrice = await market.listingPrice();
+    let listingPrice = await market.LISTINGPRICE();
     listingPrice = listingPrice.toString();
 
     // const auctionPrice = ethers.utils.parseUnits("100", "ether");
@@ -77,13 +77,13 @@ describe("NftMarketPlace", function () {
       market.mintMarketToken(nftContractAddress, {
         value: toWei(0.001),
       })
-    ).to.be.revertedWith("You need to pay the listingPrice");
+    ).to.be.revertedWith("You need to pay the LISTINGPRICE");
     // 2.
     await expect(
       market.mintMarketToken(nftContractAddress, {
         value: toWei(0.003),
       })
-    ).to.be.revertedWith("You need to pay the listingPrice");
+    ).to.be.revertedWith("You need to pay the LISTINGPRICE");
     // putting up 3 nft's for sale
     await market.saleMarketToken(1, 200, nftContractAddress);
     await market.saleMarketToken(2, 200, nftContractAddress);
