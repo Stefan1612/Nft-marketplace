@@ -14,6 +14,18 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 /// @notice Counter Library to keep track of TokenID
 import "@openzeppelin/contracts/utils/Counters.sol";
 
+// ERROR MESSAGES ------------------------------------------------------------------
+// caller is not the owner nor has approval for tokenID
+error NftMarketPlace__NotOwnerOfToken(address sender, uint tokenId);
+error NftMarketPlace__ValueUnderOrEqualToZero(address sender, uint valueSend);
+error NftMarketPlace__TokenAlreadyOnSale(uint tokenId );
+error NftMarketPlace__DidNotPayLISTINGPRICE(uint value);
+error NftMarketPlace__NotOwnerOfContract(address requester);
+error NftMarketPlace__TokenIdUnderOne(uint tokenId);
+error NftMarketPlace__TokenNotOnSale(uint tokenId);
+error NftMarketPlace__UnequalToSellPrice(uint valueSend);
+error NftMarketPlace__CallerIsOwnerOfToken(address caller, uint tokenId);
+
 // CONTRACTS ------------------------------------------------------------------------------------
 /// @title NFT Marketplace 
 /// @author Stefan Lehmann/Stefan1612/SimpleBlock
@@ -32,7 +44,8 @@ contract NftMarketPlace is ReentrancyGuard{
     /// @notice fee to list a NFT on the marketplace
     uint256 constant public LISTINGPRICE = 0.002 ether;
 
-    mapping(address  => uint256) private addressToBalance;
+    /* // In case someone accidentally sends ether directly to this contract
+    mapping(address  => uint256) private addressToBalance; */
 
     /// @notice Market Token that gets minted every time someone mints on our market
     /// @dev struct representing our MarketToken and its values at any given time
@@ -97,13 +110,13 @@ contract NftMarketPlace is ReentrancyGuard{
 
     // MODIFIERS ------------------------------------------------------------------------------------
     
-    // In Case modifiers and requires get more gas efficient in the future
+   /*  // In Case modifiers and requires get more gas efficient in the future
     /// @notice checking if correct listing price has been paid
     /// @dev modifer to get the exact listing price
     modifier paidListingPrice() {
         require(msg.value == LISTINGPRICE, "You need to pay the LISTINGPRICE");
         _;
-    }
+    } */
 
 
 
@@ -113,7 +126,7 @@ contract NftMarketPlace is ReentrancyGuard{
         i_owner = payable(msg.sender);
     }
 
-    /// @dev In case somebody mistakenly sends ether directly to this contract
+  /*   /// @dev In case somebody mistakenly sends ether directly to this contract
     fallback() payable external {
         addressToBalance[msg.sender] += msg.value;
         emit balanceDirectlyToContract(msg.sender, msg.value, block.timestamp);
@@ -123,10 +136,13 @@ contract NftMarketPlace is ReentrancyGuard{
         (bool sent, ) = payable(msg.sender).call{value: addressToBalance[msg.sender]}("");
         require(sent);
         addressToBalance[msg.sender] = 0;
-    }
+    } */
     /// @notice A way for the contract owner to withdraw his profits
     function withdrawContractsProfits() external {
-        require(msg.sender == i_owner, "only the owner can call this function");
+        if(msg.sender != i_owner){
+            revert NftMarketPlace__NotOwnerOfContract(msg.sender);
+        }
+        /* require(msg.sender == i_owner, "only the owner can call this function"); */
         payable(msg.sender).transfer(s_profits);
     }
 
@@ -136,8 +152,13 @@ contract NftMarketPlace is ReentrancyGuard{
     function mintMarketToken(address _nftContractAddress)
         external
         payable
-        paidListingPrice
+
+         
+
     {   
+        if(msg.value != LISTINGPRICE ){
+            revert NftMarketPlace__DidNotPayLISTINGPRICE( msg.value);
+        }
         /// @dev incrementing ID
         s_tokenIds.increment();
         uint256 currentTokenID = s_tokenIds.current();
@@ -157,7 +178,7 @@ contract NftMarketPlace is ReentrancyGuard{
         s_profits += msg.value;
         emit marketItemCreated(_nftContractAddress, currentTokenID, 0, false, msg.sender,address(0),msg.sender);
     }
-
+    
     /// @notice sell NFT
     /// @dev putting market Token for sale on marketplace
     /// @param _tokenId tokenID of NFT putting up for sale, sellPrice the price you want the NFT to be sold for, _nftContractAddress contract address of the NFT you want to sell 
@@ -166,7 +187,16 @@ contract NftMarketPlace is ReentrancyGuard{
         uint256 sellPrice,
         address _nftContractAddress
     ) external {
-        /// @dev sell price must be > 0 Wei
+        if(sellPrice <= 0){
+            revert NftMarketPlace__ValueUnderOrEqualToZero(msg.sender, sellPrice);
+        }
+        if(!idToMarketToken[_tokenId].onSale == false){
+            revert NftMarketPlace__TokenAlreadyOnSale(_tokenId);
+        }
+        if(idToMarketToken[_tokenId].owner != msg.sender){
+            revert NftMarketPlace__NotOwnerOfToken(msg.sender, _tokenId);
+        }
+        /* /// @dev sell price must be > 0 Wei
         require(sellPrice > 0, "Price must be atleast one wei");
         /// @dev token can't be on sale already
         require(
@@ -177,7 +207,7 @@ contract NftMarketPlace is ReentrancyGuard{
         require(
             idToMarketToken[_tokenId].owner == msg.sender,
             "only owner of token can call this method"
-        );
+        ); */
         /// @dev transferring the NFT created in given contract address from current caller to this marketplace
         IERC721(_nftContractAddress).transferFrom(
             msg.sender,
@@ -186,6 +216,7 @@ contract NftMarketPlace is ReentrancyGuard{
         );
 
         /// @dev updating state of for sale listed NFT
+        
         idToMarketToken[_tokenId].price = sellPrice;
         idToMarketToken[_tokenId].onSale = true;
         idToMarketToken[_tokenId].seller = payable(msg.sender);
@@ -198,7 +229,19 @@ contract NftMarketPlace is ReentrancyGuard{
         external
         payable nonReentrant 
     {   
-        /// @dev require existing ID
+        if(_tokenId <= 0){
+            revert NftMarketPlace__TokenIdUnderOne(_tokenId);
+        }
+        if(idToMarketToken[_tokenId].onSale != true){
+            revert NftMarketPlace__TokenNotOnSale(_tokenId);
+        }
+        if(msg.value != idToMarketToken[_tokenId].price){
+            revert NftMarketPlace__UnequalToSellPrice(msg.value);
+        }
+        if(msg.sender == idToMarketToken[_tokenId].owner){
+            revert NftMarketPlace__CallerIsOwnerOfToken(msg.sender, _tokenId);
+        }
+        /* /// @dev require existing ID
         require(_tokenId > 0, "TokenId must be over 0");
         require(
             msg.value == idToMarketToken[_tokenId].price,
@@ -211,7 +254,7 @@ contract NftMarketPlace is ReentrancyGuard{
         require(
             msg.sender != idToMarketToken[_tokenId].owner,
             "You cannot buy from yourself (atleast not with the same address)"
-        );
+        ); */
 
        
         /// @dev transferring NFT created in given address from this marketplace to the msg.sender (buyer)
