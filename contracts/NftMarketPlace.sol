@@ -6,7 +6,6 @@ pragma solidity ^0.8.7;
 import "hardhat/console.sol";
 /// @dev to interact the transferFrom method
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
-/// @notice security
 /// @dev security against transactions with multiple requests
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
@@ -15,9 +14,8 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 
 // ERROR MESSAGES ------------------------------------------------------------------
-// caller is not the owner nor has approval for tokenID
 error NftMarketPlace__NotOwnerOfToken(address sender, uint tokenId);
-error NftMarketPlace__ValueUnderOrEqualToZero(address sender, uint valueSend);
+error NftMarketPlace__invalidSellPrice(address sender, uint valueSend);
 error NftMarketPlace__TokenAlreadyOnSale(uint tokenId );
 error NftMarketPlace__DidNotPayLISTINGPRICE(uint value);
 error NftMarketPlace__NotOwnerOfContract(address requester);
@@ -28,13 +26,13 @@ error NftMarketPlace__CallerIsOwnerOfToken(address caller, uint tokenId);
 
 // CONTRACTS ------------------------------------------------------------------------------------
 /// @title NFT Marketplace 
-/// @author Stefan Lehmann/Stefan1612/SimpleBlock
+/// @author Stefan Lehmann/Stefan1612/SimpleBlock (same person but different pseudo identities)
 /// @notice Contract used to allow trading, selling, creating Market Items (NFT)
-/// @dev 
+/// @dev Please NOTE: I've added custom error messages in this version due to gas efficiency BUT due to the unconvential 
+// syntax I have also added the require statements in the comments for an less gas efficient but more readable alternative.
 contract NftMarketPlace is ReentrancyGuard{
 
     // Type declarations, State Variables ------------------------------------------------------------------------------------
-    /// @notice enabling counter
     /// @dev making use of counter library for Counters.Counter
     using Counters for Counters.Counter;
 
@@ -44,8 +42,6 @@ contract NftMarketPlace is ReentrancyGuard{
     /// @notice fee to list a NFT on the marketplace
     uint256 constant public LISTINGPRICE = 0.002 ether;
 
-    /* // In case someone accidentally sends ether directly to this contract
-    mapping(address  => uint256) private addressToBalance; */
 
     /// @notice Market Token that gets minted every time someone mints on our market
     /// @dev struct representing our MarketToken and its values at any given time
@@ -53,6 +49,7 @@ contract NftMarketPlace is ReentrancyGuard{
         address nftContractAddress;
         uint256 tokenId;
         uint256 price;
+        // saving onSale and owner inside one 1 storage slot.
         bool onSale;
         address payable owner;
         address payable seller;
@@ -126,24 +123,22 @@ contract NftMarketPlace is ReentrancyGuard{
         i_owner = payable(msg.sender);
     }
 
-  /*   /// @dev In case somebody mistakenly sends ether directly to this contract
+    /// @notice used for tips to project creator/deployer
     fallback() payable external {
-        addressToBalance[msg.sender] += msg.value;
-        emit balanceDirectlyToContract(msg.sender, msg.value, block.timestamp);
+        s_profits += msg.value;
     }
-    /// @dev getting their ether back if they triggered fallback for whatever reason
-    function withdrawPersonalContractProfits() external nonReentrant{
-        (bool sent, ) = payable(msg.sender).call{value: addressToBalance[msg.sender]}("");
-        require(sent);
-        addressToBalance[msg.sender] = 0;
-    } */
-    /// @notice A way for the contract owner to withdraw his profits
-    function withdrawContractsProfits() external {
+
+
+
+    /// @notice A way for the contract owner to withdraw his profits, tips/minting fees
+    function withdrawContractsProfits() external nonReentrant {
         if(msg.sender != i_owner){
             revert NftMarketPlace__NotOwnerOfContract(msg.sender);
         }
         /* require(msg.sender == i_owner, "only the owner can call this function"); */
-        payable(msg.sender).transfer(s_profits);
+        (bool success, ) = payable(msg.sender).call{value: s_profits}("");
+        require(success, "Payment wasn't successfull");
+        s_profits = 0;
     }
 
     /// @notice mint NFT
@@ -152,8 +147,6 @@ contract NftMarketPlace is ReentrancyGuard{
     function mintMarketToken(address _nftContractAddress)
         external
         payable
-
-         
 
     {   
         if(msg.value != LISTINGPRICE ){
@@ -188,7 +181,7 @@ contract NftMarketPlace is ReentrancyGuard{
         address _nftContractAddress
     ) external {
         if(sellPrice <= 0){
-            revert NftMarketPlace__ValueUnderOrEqualToZero(msg.sender, sellPrice);
+            revert NftMarketPlace__invalidSellPrice(msg.sender, sellPrice);
         }
         if(!idToMarketToken[_tokenId].onSale == false){
             revert NftMarketPlace__TokenAlreadyOnSale(_tokenId);
@@ -300,27 +293,10 @@ contract NftMarketPlace is ReentrancyGuard{
         return res;
     }
 
-    /*function deleteNFT(uint256 _tokenId) external returns (bool) {
-        require(
-            msg.sender == idToMarketToken[_tokenId].owner,
-            "only the owner of the nft can delete it"
-        );
-        uint256 currentLastTokenId = s_tokenIds.current();
-        for (uint256 i = 1; i <= currentLastTokenId; i++) {
-            if (idToMarketToken[i].tokenId == _tokenId) {
-                idToMarketToken[i] = MarketToken(
-                    address(0),
-                    0,
-                    0,
-                    false,
-                    payable(address(0)),
-                    payable(address(0)),
-                    address(0)
-                );
-            }
-        }
-        return true;
-    }*/
+    
+    /* delete/burn NFT function can be added here*/
+
+
     /// @notice getting all tokens which currently belong to msg.sender
     /// @return array of Market Tokens which currently belong to msg.sender
     function fetchAllMyTokens() external view returns (MarketToken[] memory) {
