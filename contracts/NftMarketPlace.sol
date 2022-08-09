@@ -9,6 +9,21 @@ import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 /// @dev security against transactions with multiple requests
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
+// INTERFACES ----------------------------------------------------------------------------
+
+interface IDutchAuctionFactory {
+    function createDutchAuction(uint _startingPrice,
+        uint _discountRate,
+        address _nft,
+        uint _nftId) external;
+}
+
+interface IEngAuctionFactory {
+    function createEngAuction(address _nft,
+        uint _nftId,
+        uint _startingBid) external;
+}
+
 // LIBRARIES ------------------------------------------------------------------------------------
 /// @notice Counter Library to keep track of TokenID
 import "@openzeppelin/contracts/utils/Counters.sol";
