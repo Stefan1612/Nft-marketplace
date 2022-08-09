@@ -44,7 +44,7 @@ module.exports = {
     apiKey: ETHER_SCAN_API_KEY,
   },
   solidity: {
-    version: "0.8.7",
+    compilers: [{ version: "0.8.7" }, { version: "0.8.13" }],
     settings: {
       optimizer: {
         enabled: true,

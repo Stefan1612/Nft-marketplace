@@ -9,12 +9,21 @@ interface IERC721 {
     ) external;
 }
 
+// CONTRACTS
+/// @title DutchAuction
+/// @author Stefan Lehmann/Stefan1612/SimpleBlock (same person but different pseudo identities)
+/// @notice Auction contract to create Dutch auctions for NFT's inside the NFT marketplace
+/* The auction is 7 days long by default and the price of the NFT continiusly declines by a percentange during this duration.
+Starting at a user selected starting price and a user selected discount rate*/ 
+
 contract DutchAuction {
+
+    /// @notice duration of auction 
     uint private constant DURATION = 7 days;
+
 
     IERC721 public immutable i_nft;
     uint public immutable i_nftId;
-
     address payable public immutable i_seller;
     uint public immutable i_startingPrice;
     uint public immutable i_startAt;
