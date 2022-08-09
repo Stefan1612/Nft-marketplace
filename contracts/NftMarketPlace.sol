@@ -113,12 +113,7 @@ contract NftMarketPlace is ReentrancyGuard{
         address indexed seller,
         address minter
     );
-    /// @notice signals when someone sent eth directly to this contract
-    event balanceDirectlyToContract(
-        address indexed sender,
-        uint256 value,
-        uint256 timestamp
-    );
+    
 
     // MODIFIERS ------------------------------------------------------------------------------------
     
