@@ -32,7 +32,6 @@ function App() {
 
   //handle State
   const [account, setAccount] = useState("");
-  // const [nfts, setNfts] = useState([]);
 
   //provider and signer
   let provider;
@@ -156,41 +155,6 @@ function App() {
     const network = await provider.getNetwork();
     setNetwork(network);
   }
-
-  //Loading every NFT function
-  //ADD ERROR OPTIONS TRY AND CATCH
-  /*  async function loadAll() {
-    let data = await eventContractMarketInfura.fetchAllTokens();
-
-    const tokenData = await Promise.all(
-      data.map(async (index) => {
-        //getting the TokenURI using the erc721uri method from our nft contract
-        const tokenUri = await eventContractMarketInfura.tokenURI(
-          index.tokenId
-        );
-
-        //getting the metadata of the nft using the URI
-        const meta = await axios.get(tokenUri);
-
-        //change the format to something im familiar with
-        let nftData = {
-          tokenId: index.tokenId,
-          price: ethers.utils.formatUnits(index.price.toString(), "ether"),
-          onSale: index.onSale,
-          owner: index.owner,
-          seller: index.seller,
-          minter: index.minter,
-
-          image: meta.data.image,
-          name: meta.data.name,
-          description: meta.data.description,
-        };
-
-        return nftData;
-      })
-    );
-    setNfts(tokenData);
-  } */
 
   const [ownNFTs, setOwnNFTs] = useState([]);
 
@@ -417,8 +381,7 @@ function App() {
     //list the item for sale on marketplace
     let listingPrice = await eventContractMarket.getListingPrice();
     listingPrice = listingPrice.toString();
-    /*listingPrice = listingPrice.toNumber()
-        console.log(listingPrice)*/
+    /*listingPrice = listingPrice.toNumber()*/
 
     let transaction = await signerContractMarket.mintMarketToken(
       ContractAddress[4].NFT,
@@ -462,11 +425,6 @@ function App() {
     <ThemeProvider theme={theme}>
       <Box>
         <Header />
-        {/*  <Box
-          id="background"
-          marginTop={"91vh"}
-          sx={{ backgroundColor: "#212121" }}
-        > */}
 
         <link
           rel="stylesheet"
@@ -487,7 +445,6 @@ function App() {
                 networkName={network.name}
                 handleUrlChange={handleUrlChange}
                 mintNFT={mintNFT}
-                /* nfts={nfts} */
                 onSaleNFTs={onSaleNFTs}
                 buyNFT={buyNFT}
                 FirstLoadGettingAccount={FirstLoadGettingAccount}
@@ -528,7 +485,6 @@ function App() {
           />
         </Routes>
       </Box>
-      {/*    </Box> */}
     </ThemeProvider>
   );
 }
