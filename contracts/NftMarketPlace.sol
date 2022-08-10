@@ -24,6 +24,12 @@ interface IEngAuctionFactory {
         uint _startingBid) external;
 }
 
+interface INFT {
+    function createNFT(string memory _TokenURI, address minter) external returns (uint256);
+    function setApprovalForAll(address approve, bool approved) external  returns(bool); 
+    function approve(address time, uint256 tokenId) external;
+}
+
 // LIBRARIES ------------------------------------------------------------------------------------
 /// @notice Counter Library to keep track of TokenID
 import "@openzeppelin/contracts/utils/Counters.sol";
@@ -154,7 +160,7 @@ contract NftMarketPlace is ReentrancyGuard{
     /// @notice mint NFT
     /// @dev creates marketToken and mints nft at given address(_nftContractAddress), transfers
     /// @param _nftContractAddress address of the NFT contract you want to interact with 
-    function mintMarketToken(address _nftContractAddress)
+    function mintMarketToken(address _nftContractAddress, string memory _TokenURI)
         external
         payable
 
@@ -162,9 +168,17 @@ contract NftMarketPlace is ReentrancyGuard{
         if(msg.value != LISTINGPRICE ){
             revert NftMarketPlace__DidNotPayLISTINGPRICE( msg.value);
         }
+
+        /// @dev minting NFT inside our NFT Contract and declaring the msg.sender as nft owner
+       /*  INFT(_nftContractAddress).createNFT(_TokenURI, msg.sender); */
+        // ERC721 setApprovalForAll to give marketplace access 
+        /* IERC721(_nftContractAddress).setApprovalForAll(address(this), true);  */
+        
         /// @dev incrementing ID
         s_tokenIds.increment();
         uint256 currentTokenID = s_tokenIds.current();
+
+        /* IERC721(_nftContractAddress).approve(address(this), currentTokenID); */
 
         /// @dev create MarketToken with current ID and save inside mapping
         idToMarketToken[currentTokenID] = MarketToken(
@@ -172,14 +186,14 @@ contract NftMarketPlace is ReentrancyGuard{
             currentTokenID,
             0,
             false,
-            payable(msg.sender),
+            payable(tx.origin),
             payable(address(0)),
-            msg.sender
+            tx.origin
         );
 
         /// @dev adding listing price to contract s_profits
         s_profits += msg.value;
-        emit marketItemCreated(_nftContractAddress, currentTokenID, 0, false, msg.sender,address(0),msg.sender);
+        emit marketItemCreated(_nftContractAddress, currentTokenID, 0, false, tx.origin,address(0),tx.origin);
     }
     
     /// @notice sell NFT

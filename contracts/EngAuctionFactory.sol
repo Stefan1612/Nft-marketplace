@@ -8,7 +8,6 @@ contract auctionFactory{
 
     EngAuction[] public EngAuctionAddresses; 
 
-
     function createEngAuction(address _nft,
         uint _nftId,
         uint _startingBid) external {
@@ -17,6 +16,4 @@ contract auctionFactory{
        _startingBid);
         EngAuctionAddresses.push(engAuction);
     }
-
-
 }

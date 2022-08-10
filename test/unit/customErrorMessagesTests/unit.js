@@ -32,8 +32,8 @@ describe("NftMarketPlace", function () {
 
     const [owner, addr1, addr2] = await ethers.getSigners();
     // mint and create marketItem
-    await nft.createNFT("https-1");
-    await market.mintMarketToken(nftContractAddress, {
+    /* await nft.createNFT("https-1"); */
+    await market.mintMarketToken(nftContractAddress, "https-1", {
       value: listingPrice,
     });
     // getting one item from the market and ensuring that every field is correct
@@ -59,28 +59,28 @@ describe("NftMarketPlace", function () {
     expect(await nft.ownerOf(1)).to.be.equal(owner.address);
 
     // minting 3 extra NFT's and marketItems (makes a total of 4)
-    await nft.createNFT("https-2");
-    await market.mintMarketToken(nftContractAddress, {
+    /* await nft.createNFT("https-2"); */
+    await market.mintMarketToken(nftContractAddress, "https-2", {
       value: listingPrice,
     });
-    await nft.createNFT("https-3");
-    await market.mintMarketToken(nftContractAddress, {
+    /* await nft.createNFT("https-3"); */
+    await market.mintMarketToken(nftContractAddress, "https-3", {
       value: listingPrice,
     });
-    await nft.createNFT("https-3");
-    await market.mintMarketToken(nftContractAddress, {
+    /* await nft.createNFT("https-3"); */
+    /* await market.mintMarketToken(nftContractAddress, "https-4", {
       value: listingPrice,
-    });
+    }); */
     // paying wrong listingPrice
     // 1.
     await expect(
-      market.mintMarketToken(nftContractAddress, {
+      market.mintMarketToken(nftContractAddress, "https-4", {
         value: toWei(0.001),
       })
     ).to.be.revertedWith("NftMarketPlace__DidNotPayLISTINGPRICE");
     // 2.
     await expect(
-      market.mintMarketToken(nftContractAddress, {
+      market.mintMarketToken(nftContractAddress, "https-4", {
         value: toWei(0.003),
       })
     ).to.be.revertedWith("NftMarketPlace__DidNotPayLISTINGPRICE");
@@ -122,7 +122,7 @@ describe("NftMarketPlace", function () {
     ).to.be.revertedWith("NftMarketPlace__NotOwnerOfToken");
 
     // https://ethereum.stackexchange.com/questions/117944/why-do-i-keep-receiving-this-error-revert-erc721-transfer-caller-is-not-owner
-    await nft.connect(addr2).setApprovalForAll(marketAddress, true);
+    /* await nft.connect(addr2).setApprovalForAll(marketAddress, true); */
     await market.connect(addr2).saleMarketToken(1, 420, nftContractAddress);
 
     await expect(
@@ -131,28 +131,4 @@ describe("NftMarketPlace", function () {
       })
     );
   });
-
-  /* it("Should check what happens if user bypasses our nft marketplaces and triggers either nft or the marketplace alone multiple times", async function () {
-    let listingPrice = await market.LISTINGPRICE();
-    listingPrice = listingPrice.toString();
-
-    const [owner, addr1, addr2] = await ethers.getSigners();
-
-    await nft.createNFT("https-1");
-    await nft.createNFT("https-2");
-
-    await nft.connect(addr2).createNFT("https-3");
-    await nft.connect(addr2).createNFT("https-4");
-    await market.connect(addr2).mintMarketToken(nftContractAddress, {
-      value: listingPrice,
-    });
-    await nft.createNFT("https-5");
-    await nft.connect(addr1).createNFT("https-6");
-    await market.connect(addr1).mintMarketToken(nftContractAddress, {
-      value: listingPrice,
-    });
-
-    await expect()
-
-  }); */
 });

@@ -8,7 +8,6 @@ contract auctionFactory{
 
     DutchAuction[] public DutchAuctionAddresses; 
 
-
     function createDutchAuction(uint _startingPrice,
         uint _discountRate,
         address _nft,
@@ -19,6 +18,4 @@ contract auctionFactory{
          _nftId);
         DutchAuctionAddresses.push(dutchAuction);
     }
-
-
 }

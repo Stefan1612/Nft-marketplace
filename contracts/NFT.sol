@@ -11,6 +11,12 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 // keeping state of tokenURI
 import "@openzeppelin/contracts/utils/Counters.sol";
 
+// INTERFACES
+
+interface INftMarketPlace {
+    function mintMarketToken(address _nftContractAddress, string memory _TokenURI) external payable;
+}
+
 // ERROR MESSAGES
 // caller is not the owner nor has approval for tokenID
 error NotOwner(address sender, uint i);
@@ -40,21 +46,24 @@ contract NFT is ERC721URIStorage {
 
     /// @notice mint function(createNFT)
     /// @return current tokenID
-    function createNFT(string memory tokenURI) external returns (uint256) {
+    function createNFT(string memory tokenURI, address minter) external payable returns (uint256) {
+        require(msg.sender == i_marketplace);
         // incrementing the id everytime after minting
         s_tokenIds.increment();
         // unique current ID
         uint256 currentTokenId = s_tokenIds.current();
 
         // ERC721 _mint
-        _safeMint(msg.sender, currentTokenId);
+        _safeMint(minter, currentTokenId);
 
         // ERC721URIStorage _setTokenURI
         _setTokenURI(currentTokenId, tokenURI);
 
         // ERC721 setApprovalForAll to give marketplace access 
         setApprovalForAll(i_marketplace, true);
-
+        /* approve(i_marketplace, currentTokenId); */
+        /* (bool result, ) = address(i_marketplace).call{value: msg.value}(abi.encodeWithSignature("mintMarketToken(bytes32, string memory"), abi.encode(address(this), tokenURI));
+        require(result, "transaction was not successfull"); */
         return currentTokenId;
     }
 
