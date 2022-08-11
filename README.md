@@ -1,4 +1,4 @@
-# NFT-Marketplace Status/Issues/Ideas
+# NFT-Marketplace 
 
 ## Status
 The NFT Marketplace is currently running and fully functional on Rinkeby at
