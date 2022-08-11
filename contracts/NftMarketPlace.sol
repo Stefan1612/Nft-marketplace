@@ -80,6 +80,8 @@ contract NftMarketPlace is ReentrancyGuard{
     /// @notice contract deployer
     address immutable private i_owner;
 
+    address private immutable i_dutchFactoryContract;
+    address private immutable i_engFactoryContract;
     
     // EVENTS ------------------------------------------------------------------------------------
     /// @notice signal used to update the website in real time after mint
@@ -129,8 +131,10 @@ contract NftMarketPlace is ReentrancyGuard{
 
     // FUNCTIONS ------------------------------------------------------------------------------------
     /// @notice setting owner to contract deployer
-    constructor() {
+    constructor(address _DutchAuctionFactory, address _EngFactoryContract) {
         i_owner = payable(msg.sender);
+        i_dutchFactoryContract = _DutchAuctionFactory;
+        i_engFactoryContract = _EngFactoryContract;
     }
 
     /// @notice used for tips to project creator/deployer
@@ -375,6 +379,23 @@ contract NftMarketPlace is ReentrancyGuard{
         return res;
     }
 
+    function McreateDutchAuction(uint _startingPrice,
+        uint _discountRate,
+        address _nft,
+        uint _nftId) external {
+        IDutchAuctionFactory(i_dutchFactoryContract).createDutchAuction(_startingPrice,
+        _discountRate,
+        _nft,
+       _nftId);
+    }
+
+    function McreateEngAuction(address _nft,
+        uint _nftId,
+        uint _startingBid) external {
+        IEngAuctionFactory(i_engFactoryContract).createEngAuction(_nft,
+       _nftId,
+        _startingBid);
+    }
     /// @return listing price
     function getListingPrice() external pure returns(uint){
         return LISTINGPRICE;

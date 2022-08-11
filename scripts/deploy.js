@@ -1,41 +1,3 @@
-/* const hre = require("hardhat");
-const fs = require("fs")
-
-async function main() {
-  
-  
-  const NFTMarket = await hre.ethers.getContractFactory("NftMarketPlace");
-  const nftMarket = await NFTMarket.deploy();
-  await nftMarket.deployed();
-  console.log("nftMarket contract deployed to: ", nftMarket.address);
-
-  
-
-  const NFT = await hre.ethers.getContractFactory("NFT");
-  const nft = await NFT.deploy(nftMarket.address);
-
-  await nft.deployed();
-
-  console.log("NftFactory deployed to:", nft.address);
-
-
-  let config = `
-  export const nftmarketaddress = "${nftMarket.address}"
-  export const nftaddress = "${nft.address}"`
-
-  let data = JSON.stringify(config)
-  fs.writeFileSync("config.js", JSON.parse(data))
-
-}
-
-
-main()
-  .then(() => process.exit(0))
-  .catch((error) => {
-    console.error(error);
-    process.exit(1);
-  }); */
-
 const hre = require("hardhat");
 const {
   storeContractAddress,
@@ -44,7 +6,12 @@ const {
 } = require("./helper-functions");
 
 const { ethers, network } = hre;
+
+let DutchAuctionFactoryaddress = "";
+let EngAuctionFactoryaddress = "";
 let NftAddress = "";
+let NFTMarketplaceAddress = "";
+
 async function deploy(contractName, args = []) {
   const { chainId } = network.config;
 
@@ -57,13 +24,36 @@ async function deploy(contractName, args = []) {
 
   console.log("Deployer:", (await ethers.getSigners())[0].address);
   console.log(`${contractName} deployed to:`, contract.address);
-  NftAddress = contract.address;
-  printEtherscanLink(contract.address, chainId);
+  switch (contractName) {
+    case "DutchAuctionFactory":
+      DutchAuctionFactoryaddress = contract.address;
+      break;
+
+    case "EngAuctionFactory":
+      EngAuctionFactoryaddress = contract.address;
+      break;
+
+    case "NftMarketPlace":
+      NFTMarketplaceAddress = contract.address;
+      break;
+
+    case "NFT":
+      NftAddress = contract.address;
+      break;
+    default:
+      console.log("Wrong contract");
+  }
+  NftAddress = printEtherscanLink(contract.address, chainId);
 }
 
 async function main() {
-  await deploy("NftMarketPlace");
-  await deploy("NFT", [NftAddress]);
+  await deploy("DutchAuctionFactory");
+  await deploy("EngAuctionFactory");
+  await deploy("NftMarketPlace", [
+    DutchAuctionFactoryaddress,
+    EngAuctionFactoryaddress,
+  ]);
+  await deploy("NFT", [NFTMarketplaceAddress]);
   console.log(NftAddress);
 }
 

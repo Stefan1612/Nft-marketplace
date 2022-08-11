@@ -20,8 +20,8 @@ interface IERC721 {
 /// @title DutchAuction
 /// @author Stefan Lehmann/Stefan1612/SimpleBlock (same person but different pseudo identities)
 /// @notice Auction contract to create Dutch auctions for NFT's inside the NFT marketplace
-/* The auction is 7 days long by default and the price of the NFT continiusly declines by a percentange during this duration.
-Starting at a user selected starting price and a user selected discount rate*/ 
+/* The auction is 7 days long by default and during this seven days users are able to bid for the NFT. After
+the seven days the highest bid gains ownership of the NFT*/ 
 
 contract EngAuction {
     event Start();
@@ -49,7 +49,7 @@ contract EngAuction {
         i_nft = IERC721(_nft);
         i_nftId = _nftId;
 
-        i_seller = payable(msg.sender);
+        i_seller = payable(tx.origin);
         highestBid = _startingBid;
     }
 

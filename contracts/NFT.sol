@@ -58,21 +58,5 @@ contract NFT is ERC721URIStorage {
         return currentTokenId;
     }
 
-    /// @notice burns NFT's
-    /// @dev sends token to address(0)
-    function burn(uint256 tokenId) external virtual {
-
-        // In case require statements get more gas efficient in the future
-       /*  require(
-            _isApprovedOrOwner(_msgSender(), tokenId),
-            "ERC721Burnable: caller is not owner nor approved"
-        ); */
-
-        if( !_isApprovedOrOwner(_msgSender(), tokenId)){
-            revert NotOwner(msg.sender, tokenId);
-        }
-
-        // sends token to address(0)
-        _burn(tokenId);
-    }
+   
 }
