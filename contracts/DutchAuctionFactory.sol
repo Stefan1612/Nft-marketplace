@@ -4,11 +4,10 @@ pragma solidity ^0.8.7;
 import "./DutchAuction.sol";
 
 
-contract auctionFactory{
+contract DutchAuctionFactory{
 
     DutchAuction[] public DutchAuctionAddresses; 
-
-
+    
     function createDutchAuction(uint _startingPrice,
         uint _discountRate,
         address _nft,
@@ -20,5 +19,7 @@ contract auctionFactory{
         DutchAuctionAddresses.push(dutchAuction);
     }
 
-
+    function returnAllDutchAuctions() public view returns(DutchAuction[] memory){
+        return DutchAuctionAddresses;
+    }
 }

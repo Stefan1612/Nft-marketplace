@@ -4,7 +4,7 @@ pragma solidity ^0.8.7;
 import "./EngAuction.sol";
 
 
-contract auctionFactory{
+contract EngAuctionFactory{
 
     EngAuction[] public EngAuctionAddresses; 
 

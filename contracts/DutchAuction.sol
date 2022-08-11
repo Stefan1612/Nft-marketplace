@@ -36,7 +36,7 @@ contract DutchAuction {
         address _nft,
         uint _nftId
     ) {
-        i_seller = payable(msg.sender);
+        i_seller = payable(tx.origin);
         i_startingPrice = _startingPrice;
         i_startAt = block.timestamp;
         i_expiresAt = block.timestamp + DURATION;
