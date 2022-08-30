@@ -158,9 +158,7 @@ function App() {
 
   const [ownNFTs, setOwnNFTs] = useState([]);
 
-  async function loadOwnNFTs() {
-    let data = await signerContractMarket.fetchAllMyTokens();
-
+  async function axiosGetTokenData(data) {
     const tokenData = await Promise.all(
       data.map(async (index) => {
         //getting the TokenURI using the erc721uri method from our nft contract
@@ -185,6 +183,12 @@ function App() {
         return nftData;
       })
     );
+    return tokenData;
+  }
+
+  async function loadOwnNFTs() {
+    let data = await signerContractMarket.fetchAllMyTokens();
+    let tokenData = axiosGetTokenData(data);
     setOwnNFTs(tokenData);
   }
 
@@ -223,29 +227,7 @@ function App() {
 
   async function loadMintedNFTs() {
     let data = await signerContractMarket.fetchTokensMintedByCaller();
-
-    const tokenData = await Promise.all(
-      data.map(async (index) => {
-        //getting the TokenURI using the erc721uri method from our nft contract
-        const tokenUri = await eventContractNFT.tokenURI(index.tokenId);
-
-        //getting the metadata of the nft using the URI
-        const meta = await axios.get(tokenUri);
-        let nftData = {
-          tokenId: index.tokenId,
-          price: ethers.utils.formatUnits(index.price.toString(), "ether"),
-          onSale: index.onSale,
-          owner: index.owner,
-          seller: index.seller,
-          minter: index.minter,
-          image: meta.data.image,
-          name: meta.data.name,
-          description: meta.data.description,
-        };
-
-        return nftData;
-      })
-    );
+    let tokenData = axiosGetTokenData(data);
     setMintedNFTs(tokenData);
   }
 
@@ -391,28 +373,6 @@ function App() {
     );
     await transaction.wait();
   }
-
-  /*  
-  async function deletingNFT(marketItem) {
-    const signer = provider.getSigner();
-    let contract = new ethers.Contract(
-      ContractAddress[4].NftMarketPlace,
-      NFT.abi,
-      signer
-    );
-
-    let id = marketItem.tokenId;
-    id = id.toNumber();
-    await contract.burn(id);
-
-    contract = new ethers.Contract(
-      ContractAddress[4].NFT,
-      NftMarketPlace.abi,
-      signer
-    );
-
-    await contract.deleteNFT(id);
-  } */
 
   function changeFormInputDescription(e) {
     setFormInput({ ...formInput, description: e.target.value });

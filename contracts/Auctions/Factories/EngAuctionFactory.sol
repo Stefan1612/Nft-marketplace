@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.7;
  
-import "./EngAuction.sol";
+import "../EngAuction.sol";
 
 
 contract EngAuctionFactory{
@@ -18,5 +18,7 @@ contract EngAuctionFactory{
         EngAuctionAddresses.push(engAuction);
     }
 
-
+    function returnAllEngAuctions() public view returns(EngAuction[] memory){
+        return EngAuctionAddresses;
+    }
 }
