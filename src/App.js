@@ -3,6 +3,12 @@ import "./App.css";
 import React, { useState, useEffect } from "react";
 import { Route, Routes } from "react-router-dom";
 import { Box, ThemeProvider } from "@mui/material";
+
+import Web3Modal from "web3modal";
+import WalletConnectProvider from "@walletconnect/web3-provider";
+import CoinbaseWalletSDK from "@coinbase/wallet-sdk";
+import Walletlink from "walletlink";
+import Authereum from "authereum";
 //Components
 
 import Home from "./Components/Home";
@@ -26,23 +32,68 @@ import theme from "./Components/theme/theme";
 // const {utils, BigNumber} = require('ethers');
 
 function App() {
-  //contract addresses
-  /*  const nftmarketaddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
-  const ContractAddress[4].NftMarketPlace = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"; */
+  const providerOptions = {
+    binancechainwallet: {
+      package: true,
+    },
+    authereum: {
+      package: Authereum, // required
+    },
+    walletconnect: {
+      package: WalletConnectProvider,
+      options: {
+        infuraId: process.env.REACT_APP_PORJECT_ID,
+      },
+    },
+
+    walletlink: {
+      package: CoinbaseWalletSDK, // CoinbaseWalletSDK, // Required
+      options: {
+        appName: "Marketplace", // Required
+        infuraId: process.env.REACT_APP_PORJECT_ID, // Required
+        rpc: "", // Optional if `infuraId` is provided; otherwise it's required
+        chainId: 4, // Optional. It defaults to 1 if not provided
+        darkMode: false, // Optional. Use dark theme, defaults to false
+      },
+    },
+  };
+
+  const web3Modal = new Web3Modal({
+    network: "rinkeby",
+    theme: "dark",
+    cacheProvider: true,
+    providerOptions,
+  });
 
   //handle State
   const [account, setAccount] = useState("");
 
   //provider and signer
-  let provider;
 
-  if (window.ethereum) {
-    provider = new ethers.providers.Web3Provider(window.ethereum);
+  useEffect(() => {
+    getProvider();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  /* let provider; */
+  const [signer, setSigner] = useState();
+  const [provider, setProvider] = useState();
+
+  async function getProvider() {
+    if (window.ethereum) {
+      /* provider = new ethers.providers.Web3Provider(window.ethereum); */
+      /*  const instance = await web3Modal.connect();
+
+      provider = new ethers.providers.Web3Provider(instance); */
+    }
   }
-  let signer;
-  if (window.ethereum) {
+
+  /* if (window.ethereum) {
+     provider = new ethers.providers.Web3Provider(window.ethereum);
+  } */
+
+  /* if (window.ethereum) {
     signer = provider.getSigner();
-  }
+  } */
 
   // infuraProvider
 
@@ -55,12 +106,14 @@ function App() {
   const eventContractMarket = new ethers.Contract(
     ContractAddress[4].NftMarketPlace,
     NftMarketPlace.abi,
+    //infuraProvider //
     provider
   );
   //nft
   const eventContractNFT = new ethers.Contract(
     ContractAddress[4].NFT,
     NFT.abi,
+    //infuraProvider //
     provider
   );
   const eventContractMarketInfura = new ethers.Contract(
@@ -88,7 +141,7 @@ function App() {
     if (provider) {
       FirstLoadGettingAccount(); // user provider
       gettingNetworkNameChainId(); // user provider
-      /*  loadAll(); */
+
       loadOwnNFTs(); // user provider
       loadMintedNFTs(); // user provider
     }
@@ -97,7 +150,20 @@ function App() {
 
   //side loaded
   async function FirstLoadGettingAccount() {
-    if (typeof window.ethereum !== undefined) {
+    /// using web3modal
+    web3Modal.clearCachedProvider();
+    const instance = await web3Modal.connect();
+
+    const provider_M = new ethers.providers.Web3Provider(instance);
+    let signer_M = provider_M.getSigner();
+    setProvider(provider_M);
+    setSigner(signer_M);
+    const accounts = await provider_M.send("eth_requestAccounts");
+    setAccount(accounts[0]);
+
+    /// using default metamask
+
+    /* if (typeof window.ethereum !== undefined) {
       const accounts = await window.ethereum.request({
         method: "eth_requestAccounts",
       });
@@ -105,7 +171,7 @@ function App() {
     } else {
       // eslint-disable-next-line
       window.alert("Install Metamask!");
-    }
+    } */
   }
 
   //on chain change

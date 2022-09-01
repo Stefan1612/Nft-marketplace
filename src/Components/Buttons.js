@@ -26,7 +26,7 @@ const Buttons = (props) => {
         sx={{ marginLeft: "5px" }}
         onClick={(e) => props.FirstLoadGettingAccount()}
       >
-        Metamask
+        Connect!
       </Button>
     </Box>
   );
