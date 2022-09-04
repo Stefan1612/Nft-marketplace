@@ -24,7 +24,9 @@ import ContractAddress from "./config/contracts/map.json";
 //others
 import { ethers } from "ethers";
 import axios from "axios";
-import { create as ipfsHttpClient } from "ipfs-http-client";
+/* import { create as ipfsHttpClient } from "ipfs-http-client"; */
+import { create } from "ipfs-http-client";
+import { Buffer } from "buffer";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 import theme from "./Components/theme/theme";
@@ -70,30 +72,9 @@ function App() {
 
   //provider and signer
 
-  useEffect(() => {
-    getProvider();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
   /* let provider; */
   const [signer, setSigner] = useState();
   const [provider, setProvider] = useState();
-
-  async function getProvider() {
-    if (window.ethereum) {
-      /* provider = new ethers.providers.Web3Provider(window.ethereum); */
-      /*  const instance = await web3Modal.connect();
-
-      provider = new ethers.providers.Web3Provider(instance); */
-    }
-  }
-
-  /* if (window.ethereum) {
-     provider = new ethers.providers.Web3Provider(window.ethereum);
-  } */
-
-  /* if (window.ethereum) {
-    signer = provider.getSigner();
-  } */
 
   // infuraProvider
 
@@ -138,13 +119,14 @@ function App() {
   //side loaded
   useEffect(() => {
     loadOnSaleNFTs();
-    if (provider) {
-      FirstLoadGettingAccount(); // user provider
-      gettingNetworkNameChainId(); // user provider
+    /* if (provider) { */
+    console.log("should load");
+    /* FirstLoadGettingAccount(); */ // user provider
+    /* gettingNetworkNameChainId(); */ // user provider
 
-      loadOwnNFTs(); // user provider
-      loadMintedNFTs(); // user provider
-    }
+    loadOwnNFTs(); // user provider
+    loadMintedNFTs(); // user provider
+    /*   } */
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -157,10 +139,11 @@ function App() {
     const provider_M = new ethers.providers.Web3Provider(instance);
     let signer_M = provider_M.getSigner();
     setProvider(provider_M);
+    console.log(provider_M);
     setSigner(signer_M);
     const accounts = await provider_M.send("eth_requestAccounts");
     setAccount(accounts[0]);
-
+    console.log(accounts[0]);
     /// using default metamask
 
     /* if (typeof window.ethereum !== undefined) {
@@ -209,6 +192,7 @@ function App() {
       console.log("Please connect to MetaMask.");
     } else if (accounts[0] !== account) {
       setAccount(accounts[0]);
+      console.log(accounts[0]);
       window.location.reload();
     }
   }
@@ -217,10 +201,10 @@ function App() {
     chanId: "",
     name: "",
   });
-  async function gettingNetworkNameChainId() {
+  /*  async function gettingNetworkNameChainId() {
     const network = await provider.getNetwork();
     setNetwork(network);
-  }
+  } */
 
   const [ownNFTs, setOwnNFTs] = useState([]);
 
@@ -253,9 +237,43 @@ function App() {
   }
 
   async function loadOwnNFTs() {
-    let data = await signerContractMarket.fetchAllMyTokens();
+    console.log("provider");
+    console.log(provider);
+    if (provider) {
+      let data = await signerContractMarket.fetchAllMyTokens();
+      let tokenData = axiosGetTokenData(data);
+      setOwnNFTs(tokenData);
+    }
+    /*  let data = await signerContractMarket.fetchAllMyTokens();
     let tokenData = axiosGetTokenData(data);
-    setOwnNFTs(tokenData);
+    setOwnNFTs(tokenData); */
+    /* let data = await signerContractMarket.fetchAllMyTokens();
+     console.log(data);
+    const tokenData = await Promise.all(
+      data.map(async (index) => {
+        //getting the TokenURI using the erc721uri method from our nft contract
+        const tokenUri = await eventContractNFT.tokenURI(index.tokenId);
+
+        //getting the metadata of the nft using the URI
+        const meta = await axios.get(tokenUri);
+
+        //change the format to something im familiar with
+        let nftData = {
+          tokenId: index.tokenId,
+          price: ethers.utils.formatUnits(index.price.toString(), "ether"),
+          onSale: index.onSale,
+          owner: index.owner,
+          seller: index.seller,
+          minter: index.minter,
+          image: meta.data.image,
+          name: meta.data.name,
+          description: meta.data.description,
+        };
+
+        return nftData;
+      })
+    );
+    setOwnNFTs(tokenData); */
   }
 
   const [onSaleNFTs, setOnSaleNFTs] = useState([]);
@@ -292,9 +310,11 @@ function App() {
   const [mintedNFTs, setMintedNFTs] = useState([]);
 
   async function loadMintedNFTs() {
-    let data = await signerContractMarket.fetchTokensMintedByCaller();
-    let tokenData = axiosGetTokenData(data);
-    setMintedNFTs(tokenData);
+    if (provider) {
+      let data = await signerContractMarket.fetchTokensMintedByCaller();
+      let tokenData = axiosGetTokenData(data);
+      setMintedNFTs(tokenData);
+    }
   }
 
   //uint256 _tokenId, address _nftContractAddress, value
@@ -358,8 +378,22 @@ function App() {
     console.log(previewPriceTwo);
   };
 
-  //client used to host and upload data, endpoint infura
-  const client = ipfsHttpClient("https://ipfs.infura.io:5001/api/v0");
+  const projectId = process.env.REACT_APP_PORJECT_ID_IPFS; // <---------- your Infura Project ID
+
+  const projectSecret = process.env.REACT_APP_PORJECT_SECRET_IPFS; // <---------- your Infura Secret
+
+  const projectIdAndSecret = `${projectId}:${projectSecret}`;
+
+  const client = create({
+    host: "ipfs.infura.io",
+    port: 5001,
+    protocol: "https",
+    headers: {
+      authorization: `Basic ${Buffer.from(projectIdAndSecret).toString(
+        "base64"
+      )}`,
+    },
+  });
 
   //keeping track of URL inserted as image for NFT metadata
   const [fileURL, setFileURL] = useState(null);
@@ -379,7 +413,7 @@ function App() {
       );
       //added is an object containing the path(hash), CID, and the size of the file
       //console.log(added)
-      const url = `https://ipfs.infura.io/ipfs/${added.path}`;
+      const url = `https://biconomynft.infura-ipfs.io/ipfs/${added.path}`;
       setFileURL(url);
       // console.log(url)
     } catch (error) {
@@ -401,7 +435,7 @@ function App() {
 
     try {
       const added = await client.add(data);
-      const url = `https://ipfs.infura.io/ipfs/${added.path}`;
+      const url = `https://biconomynft.infura-ipfs.io/ipfs/${added.path}`;
       //run a function that creates Sale and passes in the URL
       mintNFT(url);
     } catch (error) {

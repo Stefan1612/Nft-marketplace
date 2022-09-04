@@ -49,16 +49,13 @@ error NftMarketPlace__CallerIsOwnerOfToken(address caller, uint tokenId);
 /// @title NFT Marketplace 
 /// @author Stefan Lehmann/Stefan1612/SimpleBlock (same person but different pseudo identities)
 /// @notice Contract used to allow trading, selling, creating Market Items (NFT)
-/// @dev Please NOTE: I've added custom error messages in this version due to gas efficiency BUT due to the unconvential 
-// syntax I have also added the require statements in the comments for an less gas efficient but more readable alternative.
+/// @dev Please NOTE: I've added custom error messages in this version due to gas efficiency BUT because of the unconvential 
+// syntax I have also added the require statements in the comments for a less gas efficient but more readable alternative.
 contract NftMarketPlace is ReentrancyGuard, ERC2771Recipient{
 
 
     // BICONOMY
 
-    string public override versionRecipient = "v0.0.1";
-
-    
     function _msgSender() internal override ( ERC2771Recipient) view returns (address) {
         return ERC2771Recipient._msgSender();
     }
@@ -67,7 +64,6 @@ contract NftMarketPlace is ReentrancyGuard, ERC2771Recipient{
     function _msgData() internal override ( ERC2771Recipient) view returns (bytes calldata) {
         return ERC2771Recipient._msgData();
     }
-
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -104,7 +100,9 @@ contract NftMarketPlace is ReentrancyGuard, ERC2771Recipient{
 
     /// @notice contract deployer
     address immutable private i_owner;
-
+    // versioning needed for biconomy gasless tx
+    string public override versionRecipient = "v0.0.1";
+    
     address private immutable i_dutchFactoryContract;
     address private immutable i_engFactoryContract;
     
