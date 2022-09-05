@@ -7,7 +7,7 @@ import {
   Container,
   Input,
 } from "@mui/material";
-import Footer from "./Footer";
+import Footer from "../Footer";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 const OwnNfts = (props) => {
   return (
@@ -38,6 +38,7 @@ const OwnNfts = (props) => {
             >
               NFT's that you currently own!
             </Typography>
+            <Button onClick={(e) => props.loadOwnNFTs()}>laod Own</Button>
 
             {props.ownNFTs.length === 0 && (
               <h1 className="text-center " style={{ marginTop: "4vh" }}>

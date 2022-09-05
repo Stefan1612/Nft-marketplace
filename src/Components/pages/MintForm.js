@@ -6,7 +6,7 @@ import {
   Input,
   TextField,
 } from "@mui/material";
-import BackgroundImageTwo from "./BackgroundImageTwo";
+import BackgroundImageTwo from "../BackgroundImageTwo";
 const MintForm = (props) => {
   return (
     <Box style={{ paddingTop: "15vh", height: "65vh" }}>

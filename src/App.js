@@ -11,10 +11,13 @@ import Walletlink from "walletlink";
 import Authereum from "authereum";
 //Components
 
-import Home from "./Components/Home";
-import MintedTokens from "./Components/MintedTokens";
-import MintForm from "./Components/MintForm";
-import OwnNfts from "./Components/OwnNfts";
+import Home from "./Components/pages/Home";
+import MintedTokens from "./Components/pages/MintedTokens";
+import MintForm from "./Components/pages/MintForm";
+import OwnNfts from "./Components/pages/OwnNfts";
+import BiconomyCrossChain from "./Components/pages/BiconomyChrossChain";
+import TransakGateway from "./Components/pages/TransakGateway";
+import NftHistory from "./Components/pages/NftHistory";
 import Header from "./Components/Header";
 //abi's
 
@@ -71,8 +74,8 @@ function App() {
   const [account, setAccount] = useState("");
 
   //provider and signer
+  const [isProviderSet, setIsProviderSet] = useState(false);
 
-  /* let provider; */
   const [signer, setSigner] = useState();
   const [provider, setProvider] = useState();
 
@@ -119,31 +122,43 @@ function App() {
   //side loaded
   useEffect(() => {
     loadOnSaleNFTs();
-    /* if (provider) { */
-    console.log("should load");
-    /* FirstLoadGettingAccount(); */ // user provider
-    /* gettingNetworkNameChainId(); */ // user provider
 
     loadOwnNFTs(); // user provider
     loadMintedNFTs(); // user provider
-    /*   } */
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  //user connected with one of web3modal's providers
+  useEffect(() => {
+    loadOnSaleNFTs(); // infura provider
+
+    loadOwnNFTs(); // user provider
+    loadMintedNFTs(); // user provider
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isProviderSet]);
 
   //side loaded
   async function FirstLoadGettingAccount() {
     /// using web3modal
-    web3Modal.clearCachedProvider();
-    const instance = await web3Modal.connect();
 
-    const provider_M = new ethers.providers.Web3Provider(instance);
-    let signer_M = provider_M.getSigner();
-    setProvider(provider_M);
-    console.log(provider_M);
-    setSigner(signer_M);
-    const accounts = await provider_M.send("eth_requestAccounts");
-    setAccount(accounts[0]);
-    console.log(accounts[0]);
+    if (isProviderSet === false) {
+      console.log("first Load ran");
+      await web3Modal.clearCachedProvider();
+      console.log("0");
+      const instance = await web3Modal.connect();
+      console.log("1");
+      const provider_M = new ethers.providers.Web3Provider(instance);
+      let signer_M = provider_M.getSigner();
+      setProvider(provider_M);
+      setSigner(signer_M);
+      const accounts = await provider_M.send("eth_requestAccounts");
+      setAccount(accounts[0]);
+      setIsProviderSet(true);
+      console.log("isProvidetSet === true");
+    }
+
     /// using default metamask
 
     /* if (typeof window.ethereum !== undefined) {
@@ -238,42 +253,50 @@ function App() {
 
   async function loadOwnNFTs() {
     console.log("provider");
-    console.log(provider);
-    if (provider) {
-      let data = await signerContractMarket.fetchAllMyTokens();
-      let tokenData = axiosGetTokenData(data);
-      setOwnNFTs(tokenData);
-    }
+    /*   console.log(provider.provider); */
+    /*   let providers = provider.provider;
+    const signerContractMarket = new ethers.Contract(
+      ContractAddress[4].NftMarketPlace,
+      NftMarketPlace.abi,
+      providers
+    ); */
+
+    /* let data = await signerContractMarket.fetchAllMyTokens();
+    let tokenData = axiosGetTokenData(data);
+    setOwnNFTs(tokenData); */
+
     /*  let data = await signerContractMarket.fetchAllMyTokens();
     let tokenData = axiosGetTokenData(data);
     setOwnNFTs(tokenData); */
-    /* let data = await signerContractMarket.fetchAllMyTokens();
-     console.log(data);
-    const tokenData = await Promise.all(
-      data.map(async (index) => {
-        //getting the TokenURI using the erc721uri method from our nft contract
-        const tokenUri = await eventContractNFT.tokenURI(index.tokenId);
+    if (isProviderSet) {
+      let data = await signerContractMarket.fetchAllMyTokens();
 
-        //getting the metadata of the nft using the URI
-        const meta = await axios.get(tokenUri);
+      const tokenData = await Promise.all(
+        data.map(async (index) => {
+          //getting the TokenURI using the erc721uri method from our nft contract
+          const tokenUri = await eventContractNFT.tokenURI(index.tokenId);
 
-        //change the format to something im familiar with
-        let nftData = {
-          tokenId: index.tokenId,
-          price: ethers.utils.formatUnits(index.price.toString(), "ether"),
-          onSale: index.onSale,
-          owner: index.owner,
-          seller: index.seller,
-          minter: index.minter,
-          image: meta.data.image,
-          name: meta.data.name,
-          description: meta.data.description,
-        };
+          //getting the metadata of the nft using the URI
+          const meta = await axios.get(tokenUri);
 
-        return nftData;
-      })
-    );
-    setOwnNFTs(tokenData); */
+          //change the format to something im familiar with
+          let nftData = {
+            tokenId: index.tokenId,
+            price: ethers.utils.formatUnits(index.price.toString(), "ether"),
+            onSale: index.onSale,
+            owner: index.owner,
+            seller: index.seller,
+            minter: index.minter,
+            image: meta.data.image,
+            name: meta.data.name,
+            description: meta.data.description,
+          };
+
+          return nftData;
+        })
+      );
+      setOwnNFTs(tokenData);
+    }
   }
 
   const [onSaleNFTs, setOnSaleNFTs] = useState([]);
@@ -330,7 +353,7 @@ function App() {
         value: price,
       }
     );
-    await tx.wait();
+
     loadOwnNFTs();
     loadOnSaleNFTs();
   }
@@ -484,7 +507,7 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <Box>
-        <Header />
+        <Header /* account={account} */ />
 
         <link
           rel="stylesheet"
@@ -534,6 +557,7 @@ function App() {
                 ownNFTs={ownNFTs}
                 sellNFT={sellNFT}
                 handleChangePrice={handleChangePrice}
+                loadOwnNFTs={loadOwnNFTs}
               />
             }
           />
@@ -542,6 +566,19 @@ function App() {
             exact
             path="/MintedTokens"
             element={<MintedTokens mintedNFTs={mintedNFTs} />}
+          />
+          <Route
+            exact
+            path="/BiconomyCrossChain"
+            element={<BiconomyCrossChain />}
+          />
+          <Route exact path="/TransakGateway" element={<TransakGateway />} />
+          <Route
+            exact
+            path="/NftHistory"
+            element={
+              <NftHistory infuraProvider={infuraProvider} account={account} />
+            }
           />
         </Routes>
       </Box>

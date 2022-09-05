@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@biconomy/hyphen-widget": "^0.1.0",
     "@coinbase/wallet-sdk": "^3.5.1",
     "@emotion/react": "^11.8.2",
     "@emotion/styled": "^11.8.1",
@@ -15,6 +16,7 @@
     "@testing-library/jest-dom": "^5.16.1",
     "@testing-library/react": "^12.1.2",
     "@testing-library/user-event": "^13.5.0",
+    "@transak/transak-sdk": "^1.0.31",
     "@walletconnect/web3-provider": "^1.8.0",
     "authereum": "^0.1.14",
     "axios": "^0.24.0",

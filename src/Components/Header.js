@@ -282,6 +282,33 @@ export default function PrimarySearchAppBar(props) {
                                 Owned Nft list
                               </MenuItem>
                             </Link>
+                            <Link
+                              to="/BiconomyCrossChain"
+                              className="Nav"
+                              style={{ textDecoration: "none", color: "white" }}
+                            >
+                              <MenuItem onClick={handleClose}>
+                                1 Click Cross Chain transfer
+                              </MenuItem>
+                            </Link>
+                            <Link
+                              to="/TransakGateway"
+                              className="Nav"
+                              style={{ textDecoration: "none", color: "white" }}
+                            >
+                              <MenuItem onClick={handleClose}>
+                                Buy Cryptocurrencies with 1 click!
+                              </MenuItem>
+                            </Link>
+                            <Link
+                              to="/NftHistory"
+                              className="Nav"
+                              style={{ textDecoration: "none", color: "white" }}
+                            >
+                              <MenuItem onClick={handleClose}>
+                                NftHistory
+                              </MenuItem>
+                            </Link>
                             <MenuItem onClick={handleClose}>Logout</MenuItem>
                           </MenuList>
                         </ClickAwayListener>
@@ -313,6 +340,7 @@ export default function PrimarySearchAppBar(props) {
             src={LogoSimpleBlock}
             style={{ height: "4vh" }}
           />
+          {/* <Box>{props.account}</Box> */}
           <Box sx={{ flexGrow: 1 }} />
           <Box sx={{ display: { xs: "none", md: "flex" } }}>
             <IconButton

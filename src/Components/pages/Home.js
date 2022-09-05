@@ -1,8 +1,8 @@
 import { Typography, Box, Button, Paper, Grid, Container } from "@mui/material";
-import BackgroundImage from "./BackgroundImage";
-import FAQ from "./FAQ";
-import Footer from "./Footer";
-import Buttons from "./Buttons";
+import BackgroundImage from "../BackgroundImage";
+import FAQ from "../FAQ";
+import Footer from "../Footer";
+import Buttons from "../Buttons";
 
 const Home = (props) => {
   const showButton = true;
