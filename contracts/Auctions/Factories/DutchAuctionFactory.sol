@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.7;
  
-import "./DutchAuction.sol";
+import "../DutchAuction.sol";
 
 
 contract DutchAuctionFactory{

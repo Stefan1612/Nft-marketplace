@@ -1,49 +1,87 @@
 import "./App.css";
-
 import React, { useState, useEffect } from "react";
+// Routing
 import { Route, Routes } from "react-router-dom";
+
+// UI components Library
 import { Box, ThemeProvider } from "@mui/material";
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// Web3Modal (metamask... connection)
 
 import Web3Modal from "web3modal";
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import CoinbaseWalletSDK from "@coinbase/wallet-sdk";
 import Walletlink from "walletlink";
 import Authereum from "authereum";
-//Components
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// Pages
 import Home from "./Components/pages/Home";
 import MintedTokens from "./Components/pages/MintedTokens";
 import MintForm from "./Components/pages/MintForm";
 import OwnNfts from "./Components/pages/OwnNfts";
 import BiconomyCrossChain from "./Components/pages/BiconomyChrossChain";
 import TransakGateway from "./Components/pages/TransakGateway";
-import NftHistory from "./Components/pages/NftHistory";
-import Header from "./Components/Header";
-//abi's
+import NftHistory from "./Components/NftHistory";
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// Additional Components
+
+import Header from "./Components/Header";
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// Smart contract data
+
+// ABI's
 import NFT from "./config/contracts/NFT.json";
 import NftMarketPlace from "./config/contracts/NftMarketPlace.json";
+
+// addresses
 import ContractAddress from "./config/contracts/map.json";
-//others
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// connection to the blockchain
 import { ethers } from "ethers";
+
+// fetching general data (mainly used for IPFS links in this repo)
 import axios from "axios";
-/* import { create as ipfsHttpClient } from "ipfs-http-client"; */
+
+// IPFS (NFT metadata gets stored on IPFS)
 import { create } from "ipfs-http-client";
+// needed for IPFS link
 import { Buffer } from "buffer";
+
+// UI library
 import "bootstrap/dist/css/bootstrap.min.css";
 
+// general theme set for our UI
 import theme from "./Components/theme/theme";
 
-// const {utils, BigNumber} = require('ethers');
-
 function App() {
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  // WEB3MODAL
+
+  // setting ProviderOptions for our possible Web3Modal connections
+
   const providerOptions = {
+    // enabling logging with binance wallet
     binancechainwallet: {
       package: true,
     },
+
+    // enabling logging with authereum wallet
     authereum: {
       package: Authereum, // required
     },
+
+    // enabling logging with walletconnect
     walletconnect: {
       package: WalletConnectProvider,
       options: {
@@ -51,10 +89,11 @@ function App() {
       },
     },
 
+    // enabling logging with Coinbase wallet
     walletlink: {
       package: CoinbaseWalletSDK, // CoinbaseWalletSDK, // Required
       options: {
-        appName: "Marketplace", // Required
+        appName: "Marketplace", // Required - random APP name
         infuraId: process.env.REACT_APP_PORJECT_ID, // Required
         rpc: "", // Optional if `infuraId` is provided; otherwise it's required
         chainId: 4, // Optional. It defaults to 1 if not provided
@@ -63,30 +102,38 @@ function App() {
     },
   };
 
+  // setting web3Modal with our prior declared possible provider Options
   const web3Modal = new Web3Modal({
     network: "rinkeby",
-    theme: "dark",
+    theme: "dark", // optional
     cacheProvider: true,
     providerOptions,
   });
 
-  //handle State
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  // Provider, Signer, user address
+
+  // handle State of account address
   const [account, setAccount] = useState("");
 
-  //provider and signer
+  // provider and signer
   const [isProviderSet, setIsProviderSet] = useState(false);
 
+  // will be updated with the "Connect" button
   const [signer, setSigner] = useState();
   const [provider, setProvider] = useState();
 
-  // infuraProvider
+  // infuraProvider - used to load data from the blockchain, no matter if user connected wallet
 
   const infuraProvider = new ethers.providers.InfuraProvider("rinkeby", {
     projectId: process.env.REACT_APP_PROJECT_ID,
     projectSecret: process.env.REACT_APP_PROJECT_SECRET,
   });
 
-  //market
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  // market
   const eventContractMarket = new ethers.Contract(
     ContractAddress[4].NftMarketPlace,
     NftMarketPlace.abi,
@@ -118,6 +165,8 @@ function App() {
     signer
   );
   //NFT
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   //side loaded
   useEffect(() => {

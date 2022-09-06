@@ -2,8 +2,13 @@ import React, { useState, useEffect } from "react";
 import { Box, Button, Typography, Container } from "@mui/material";
 import axios from "axios";
 import { ethers } from "ethers";
+
 import NFT from "../config/contracts/NFT.json";
+
 import ContractAddress from "../config/contracts/map.json";
+
+/* const NFT = require("../config/contracts/NFT.json"); */
+
 const NftHistory = ({
   account,
 
@@ -11,9 +16,15 @@ const NftHistory = ({
 }) => {
   const [transferHistory, setTransferHistory] = useState("");
   const [transferArray, setTransferArray] = useState([]);
+  console.log(NFT);
   async function getCovalentData() {
+    console.log("generate Data ran");
+
+    // seems like covalent updated their API's. API call has to be updated in this code
+
     const url = `https://api.covalenthq.com/v1/42/address/${account}/transfers_v2/?contract-address=${ContractAddress[42].NFT}&key=${process.env.REACT_APP_COVALENT_API_KEY}`;
     let result = await axios.get(url);
+    console.log(result);
     setTransferHistory(result);
   }
   useEffect(() => {
