@@ -340,7 +340,7 @@ export default function PrimarySearchAppBar(props) {
             src={LogoSimpleBlock}
             style={{ height: "4vh" }}
           />
-          {/* <Box>{props.account}</Box> */}
+          <Box>{props.account}</Box>
           <Box sx={{ flexGrow: 1 }} />
           <Box sx={{ display: { xs: "none", md: "flex" } }}>
             <IconButton

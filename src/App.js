@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { Route, Routes } from "react-router-dom";
 
 // UI components Library
-import { Box, ThemeProvider } from "@mui/material";
+import { Box, ThemeProvider, Button } from "@mui/material";
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -188,6 +188,8 @@ function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isProviderSet]);
 
+  let instance;
+
   //side loaded
   async function FirstLoadGettingAccount() {
     /// using web3modal
@@ -196,7 +198,7 @@ function App() {
       console.log("first Load ran");
       await web3Modal.clearCachedProvider();
       console.log("0");
-      const instance = await web3Modal.connect();
+      instance = await web3Modal.connect();
       console.log("1");
       const provider_M = new ethers.providers.Web3Provider(instance);
       let signer_M = provider_M.getSigner();
@@ -221,12 +223,18 @@ function App() {
     } */
   }
 
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  // Only metamask version
+
   //on chain change
   useEffect(() => {
     if (provider) {
       window.ethereum.on("chainChanged", handleChainChanged);
+      console.log("triggered chains changed");
       return () => {
         window.ethereum.removeListener("chainChanged", handleChainChanged);
+        console.log("triggered chains changed");
       };
     } // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -240,11 +248,13 @@ function App() {
   useEffect(() => {
     if (provider) {
       window.ethereum.on("accountsChanged", handleAccountsChanged);
+      console.log("triggered accounts changed");
       return () => {
         window.ethereum.removeListener(
           "accountsChanged",
           handleAccountsChanged
         );
+        console.log("triggered accounts changed");
       };
     } // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -260,6 +270,39 @@ function App() {
       window.location.reload();
     }
   }
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  // -----------------------------------
+  // Handle change events
+  // -----------------------------------
+  /*  async function handleChainChanged(chainId) {
+    console.log("accounts changed");
+  }
+
+  async function handleNetworkChanged(networkId) {
+    console.log("accounts changed");
+  }
+
+  async function handleAccountsChanged(accounts) {
+    console.log("accounts changed");
+  }
+
+  useEffect(() => {
+    if (instance) {
+      provider.on("chainChanged", handleChainChanged);
+      provider.on("networkChanged", handleNetworkChanged);
+      provider.on("accountsChanged", handleAccountsChanged);
+      return () => {
+        provider.removeListener("chainChanged");
+        provider.removeListener("networkChanged");
+        provider.removeListener("accountsChanged");
+      };
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); */
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
   //network
   const [network, setNetwork] = useState({
     chanId: "",
@@ -269,6 +312,22 @@ function App() {
     const network = await provider.getNetwork();
     setNetwork(network);
   } */
+
+  // Logout helper
+  // -----------------------------------
+  /* async function logout() {
+    web3Modal?.clearCachedProvider();
+    if (
+      instance &&
+      instance.currentProvider &&
+      instance.currentProvider.close
+    ) {
+      await instance.currentProvider.close();
+    }
+    web3Modal.clearCachedProvider();
+  } */
+
+  // -----------------------------------
 
   const [ownNFTs, setOwnNFTs] = useState([]);
 
@@ -301,23 +360,9 @@ function App() {
   }
 
   async function loadOwnNFTs() {
-    console.log("provider");
-    /*   console.log(provider.provider); */
-    /*   let providers = provider.provider;
-    const signerContractMarket = new ethers.Contract(
-      ContractAddress[5].NftMarketPlace,
-      NftMarketPlace.abi,
-      providers
-    ); */
-
-    /* let data = await signerContractMarket.fetchAllMyTokens();
-    let tokenData = axiosGetTokenData(data);
-    setOwnNFTs(tokenData); */
-
-    /*  let data = await signerContractMarket.fetchAllMyTokens();
-    let tokenData = axiosGetTokenData(data);
-    setOwnNFTs(tokenData); */
     if (isProviderSet) {
+      console.log(provider);
+      console.log(signer);
       let data = await signerContractMarket.fetchAllMyTokens();
 
       const tokenData = await Promise.all(
@@ -351,40 +396,71 @@ function App() {
   const [onSaleNFTs, setOnSaleNFTs] = useState([]);
 
   async function loadOnSaleNFTs() {
-    let data = await eventContractMarketInfura.fetchAllTokensOnSale();
+    try {
+      let data = await eventContractMarketInfura.fetchAllTokensOnSale();
 
-    const tokenData = await Promise.all(
-      data.map(async (index) => {
-        //getting the TokenURI using the erc721uri method from our nft contract
-        const tokenUri = await eventContractNFTInfura.tokenURI(index.tokenId);
+      const tokenData = await Promise.all(
+        data.map(async (index) => {
+          //getting the TokenURI using the erc721uri method from our nft contract
+          const tokenUri = await eventContractNFTInfura.tokenURI(index.tokenId);
 
-        //getting the metadata of the nft using the URI
-        const meta = await axios.get(tokenUri);
+          //getting the metadata of the nft using the URI
+          const meta = await axios.get(tokenUri);
 
-        let nftData = {
-          tokenId: index.tokenId,
-          price: ethers.utils.formatUnits(index.price.toString(), "ether"),
-          onSale: index.onSale,
-          owner: index.owner,
-          seller: index.seller,
-          minter: index.minter,
-          image: meta.data.image,
-          name: meta.data.name,
-          description: meta.data.description,
-        };
+          let nftData = {
+            tokenId: index.tokenId,
+            price: ethers.utils.formatUnits(index.price.toString(), "ether"),
+            onSale: index.onSale,
+            owner: index.owner,
+            seller: index.seller,
+            minter: index.minter,
+            image: meta.data.image,
+            name: meta.data.name,
+            description: meta.data.description,
+          };
 
-        return nftData;
-      })
-    );
-    setOnSaleNFTs(tokenData);
+          return nftData;
+        })
+      );
+      setOnSaleNFTs(tokenData);
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   const [mintedNFTs, setMintedNFTs] = useState([]);
 
   async function loadMintedNFTs() {
     if (provider) {
+      console.log(provider);
+      console.log(signer);
       let data = await signerContractMarket.fetchTokensMintedByCaller();
-      let tokenData = axiosGetTokenData(data);
+      console.log(data);
+      /* let tokenData = axiosGetTokenData(data);  */
+      const tokenData = await Promise.all(
+        data.map(async (index) => {
+          //getting the TokenURI using the erc721uri method from our nft contract
+          const tokenUri = await eventContractNFT.tokenURI(index.tokenId);
+
+          //getting the metadata of the nft using the URI
+          const meta = await axios.get(tokenUri);
+
+          //change the format to something im familiar with
+          let nftData = {
+            tokenId: index.tokenId,
+            price: ethers.utils.formatUnits(index.price.toString(), "ether"),
+            onSale: index.onSale,
+            owner: index.owner,
+            seller: index.seller,
+            minter: index.minter,
+            image: meta.data.image,
+            name: meta.data.name,
+            description: meta.data.description,
+          };
+
+          return nftData;
+        })
+      );
       setMintedNFTs(tokenData);
     }
   }
@@ -518,8 +594,12 @@ function App() {
   //creating the NFT(first mint at ContractAddress[5].NftMarketPlace, second create market Token at market address)
   async function mintNFT(url) {
     //first step
-    const signer = provider.getSigner();
+    /* const signer = provider.getSigner(); */
+
+    console.log(provider);
+    console.log(signer);
     let contract = new ethers.Contract(ContractAddress[5].NFT, NFT.abi, signer);
+
     // let tx =
     await contract.createNFT(url);
 
@@ -556,7 +636,7 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <Box>
-        <Header /* account={account} */ />
+        <Header account={account} />
 
         <link
           rel="stylesheet"
@@ -630,6 +710,15 @@ function App() {
             }
           />
         </Routes>
+        {/*  <Button
+          size="small"
+          onClick={async () => {
+            await web3Modal?.clearCachedProvider();
+            logout();
+          }}
+        >
+          Logout
+        </Button> */}
       </Box>
     </ThemeProvider>
   );
