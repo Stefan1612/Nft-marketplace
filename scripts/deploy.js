@@ -12,6 +12,10 @@ let EngAuctionFactoryaddress = "";
 let NftAddress = "";
 let NFTMarketplaceAddress = "";
 
+// Biconomy GOERLI forwarder address to enable native meta transactions
+
+const forwarderAddress = "0xE041608922d06a4F26C0d4c27d8bCD01daf1f792";
+
 async function deploy(contractName, args = []) {
   const { chainId } = network.config;
 
@@ -52,8 +56,9 @@ async function main() {
   await deploy("NftMarketPlace", [
     DutchAuctionFactoryaddress,
     EngAuctionFactoryaddress,
+    forwarderAddress,
   ]);
-  await deploy("NFT", [NFTMarketplaceAddress]);
+  await deploy("NFT", [NFTMarketplaceAddress, forwarderAddress]);
   console.log(NftAddress);
 }
 

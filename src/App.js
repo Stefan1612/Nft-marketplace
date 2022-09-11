@@ -104,9 +104,9 @@ function App() {
 
   // setting web3Modal with our prior declared possible provider Options
   const web3Modal = new Web3Modal({
-    network: "rinkeby",
+    network: "goerli",
     theme: "dark", // optional
-    cacheProvider: true,
+    cacheProvider: false,
     providerOptions,
   });
 
@@ -126,7 +126,7 @@ function App() {
 
   // infuraProvider - used to load data from the blockchain, no matter if user connected wallet
 
-  const infuraProvider = new ethers.providers.InfuraProvider("rinkeby", {
+  const infuraProvider = new ethers.providers.InfuraProvider("goerli", {
     projectId: process.env.REACT_APP_PROJECT_ID,
     projectSecret: process.env.REACT_APP_PROJECT_SECRET,
   });
@@ -135,32 +135,32 @@ function App() {
 
   // market
   const eventContractMarket = new ethers.Contract(
-    ContractAddress[4].NftMarketPlace,
+    ContractAddress[5].NftMarketPlace,
     NftMarketPlace.abi,
     //infuraProvider //
     provider
   );
   //nft
   const eventContractNFT = new ethers.Contract(
-    ContractAddress[4].NFT,
+    ContractAddress[5].NFT,
     NFT.abi,
     //infuraProvider //
     provider
   );
   const eventContractMarketInfura = new ethers.Contract(
-    ContractAddress[4].NftMarketPlace,
+    ContractAddress[5].NftMarketPlace,
     NftMarketPlace.abi,
     infuraProvider
   );
   const eventContractNFTInfura = new ethers.Contract(
-    ContractAddress[4].NFT,
+    ContractAddress[5].NFT,
     NFT.abi,
     infuraProvider
   );
   //signer calls
   //market
   const signerContractMarket = new ethers.Contract(
-    ContractAddress[4].NftMarketPlace,
+    ContractAddress[5].NftMarketPlace,
     NftMarketPlace.abi,
     signer
   );
@@ -305,7 +305,7 @@ function App() {
     /*   console.log(provider.provider); */
     /*   let providers = provider.provider;
     const signerContractMarket = new ethers.Contract(
-      ContractAddress[4].NftMarketPlace,
+      ContractAddress[5].NftMarketPlace,
       NftMarketPlace.abi,
       providers
     ); */
@@ -397,7 +397,7 @@ function App() {
     price = ethers.utils.parseEther(price);
     let tx = await signerContractMarket.buyMarketToken(
       id,
-      ContractAddress[4].NFT,
+      ContractAddress[5].NFT,
       {
         value: price,
       }
@@ -410,25 +410,25 @@ function App() {
   async function sellNFT(marketItem) {
     const signer = provider.getSigner();
     let contract = new ethers.Contract(
-      ContractAddress[4].NftMarketPlace,
+      ContractAddress[5].NftMarketPlace,
       NftMarketPlace.abi,
       signer
     );
     const nftContract = new ethers.Contract(
-      ContractAddress[4].NFT,
+      ContractAddress[5].NFT,
       NFT.abi,
       signer
     );
     let id = marketItem.tokenId;
     id = id.toNumber();
     await nftContract.setApprovalForAll(
-      ContractAddress[4].NftMarketPlace,
+      ContractAddress[5].NftMarketPlace,
       true
     );
     let tx = await contract.saleMarketToken(
       id,
       previewPriceTwo,
-      ContractAddress[4].NFT
+      ContractAddress[5].NFT
     );
     await tx.wait();
     loadOwnNFTs();
@@ -515,11 +515,11 @@ function App() {
     }
   }
 
-  //creating the NFT(first mint at ContractAddress[4].NftMarketPlace, second create market Token at market address)
+  //creating the NFT(first mint at ContractAddress[5].NftMarketPlace, second create market Token at market address)
   async function mintNFT(url) {
     //first step
     const signer = provider.getSigner();
-    let contract = new ethers.Contract(ContractAddress[4].NFT, NFT.abi, signer);
+    let contract = new ethers.Contract(ContractAddress[5].NFT, NFT.abi, signer);
     // let tx =
     await contract.createNFT(url);
 
@@ -538,7 +538,7 @@ function App() {
     /*listingPrice = listingPrice.toNumber()*/
 
     let transaction = await signerContractMarket.mintMarketToken(
-      ContractAddress[4].NFT,
+      ContractAddress[5].NFT,
       {
         value: listingPrice,
       }

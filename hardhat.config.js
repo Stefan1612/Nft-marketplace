@@ -1,3 +1,5 @@
+const { DirectionsRailwayTwoTone } = require("@mui/icons-material");
+
 require("dotenv").config();
 
 require("@nomiclabs/hardhat-etherscan");
@@ -11,6 +13,7 @@ const {
   APP_PRIVATE_KEY,
   COINMARKETCAP_API_KEY,
   APP_RINKEBY_ENDPOINT,
+  APP_GOERLI_ENDPOINT,
 } = process.env;
 // eslint-disable-next-line
 task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
@@ -32,6 +35,11 @@ module.exports = {
     rinkeby: {
       chainId: 4,
       url: APP_RINKEBY_ENDPOINT,
+      accounts: [APP_PRIVATE_KEY],
+    },
+    goerli: {
+      chainId: 5,
+      url: APP_GOERLI_ENDPOINT,
       accounts: [APP_PRIVATE_KEY],
     },
   },
