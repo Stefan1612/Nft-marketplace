@@ -55,7 +55,7 @@ const BackgroundImage = (props) => {
             NFT Marketplace
           </Typography>
           <Typography marginTop={2} component="h2" variant="h2">
-            Running on Rinkeby!
+            Running on Goerli!
           </Typography>
         </Box>
       </Box>

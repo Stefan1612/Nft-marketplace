@@ -38,7 +38,6 @@ const OwnNfts = (props) => {
             >
               NFT's that you currently own!
             </Typography>
-            <Button onClick={(e) => props.loadOwnNFTs()}>laod Own</Button>
 
             {props.ownNFTs.length === 0 && (
               <h1 className="text-center " style={{ marginTop: "4vh" }}>

@@ -26,7 +26,14 @@ const Buttons = (props) => {
         sx={{ marginLeft: "5px" }}
         onClick={(e) => props.FirstLoadGettingAccount()}
       >
-        Connect!
+        Connect Wallet!
+      </Button>
+      <Button
+        variant="outlined"
+        sx={{ marginLeft: "5px" }}
+        onClick={(e) => props.FirstLoadGettingAccount()}
+      >
+        Switch to Goerli!
       </Button>
     </Box>
   );

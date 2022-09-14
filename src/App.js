@@ -171,7 +171,6 @@ function App() {
   //side loaded
   useEffect(() => {
     loadOnSaleNFTs();
-
     loadOwnNFTs(); // user provider
     loadMintedNFTs(); // user provider
 
@@ -181,26 +180,28 @@ function App() {
   //user connected with one of web3modal's providers
   useEffect(() => {
     loadOnSaleNFTs(); // infura provider
-
     loadOwnNFTs(); // user provider
     loadMintedNFTs(); // user provider
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isProviderSet]);
 
-  let instance;
+  const [instance, setInstance] = useState();
+
+  let instance_M;
 
   //side loaded
   async function FirstLoadGettingAccount() {
     /// using web3modal
 
-    if (isProviderSet === false) {
+    if (!instance) {
       console.log("first Load ran");
       await web3Modal.clearCachedProvider();
-      console.log("0");
-      instance = await web3Modal.connect();
-      console.log("1");
-      const provider_M = new ethers.providers.Web3Provider(instance);
+
+      instance_M = await web3Modal.connect();
+      console.log(instance_M);
+      setInstance(instance_M);
+      const provider_M = new ethers.providers.Web3Provider(instance_M);
       let signer_M = provider_M.getSigner();
       setProvider(provider_M);
       setSigner(signer_M);
@@ -209,6 +210,8 @@ function App() {
       setIsProviderSet(true);
       console.log("isProvidetSet === true");
     }
+
+    // ------------------------------------
 
     /// using default metamask
 
@@ -225,10 +228,12 @@ function App() {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+  // -----------------------------------
   // Only metamask version
+  // -----------------------------------
 
   //on chain change
-  useEffect(() => {
+  /* useEffect(() => {
     if (provider) {
       window.ethereum.on("chainChanged", handleChainChanged);
       console.log("triggered chains changed");
@@ -269,38 +274,8 @@ function App() {
       console.log(accounts[0]);
       window.location.reload();
     }
-  }
+  } */
 
-  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-  // -----------------------------------
-  // Handle change events
-  // -----------------------------------
-  /*  async function handleChainChanged(chainId) {
-    console.log("accounts changed");
-  }
-
-  async function handleNetworkChanged(networkId) {
-    console.log("accounts changed");
-  }
-
-  async function handleAccountsChanged(accounts) {
-    console.log("accounts changed");
-  }
-
-  useEffect(() => {
-    if (instance) {
-      provider.on("chainChanged", handleChainChanged);
-      provider.on("networkChanged", handleNetworkChanged);
-      provider.on("accountsChanged", handleAccountsChanged);
-      return () => {
-        provider.removeListener("chainChanged");
-        provider.removeListener("networkChanged");
-        provider.removeListener("accountsChanged");
-      };
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); */
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   //network
@@ -308,6 +283,79 @@ function App() {
     chanId: "",
     name: "",
   });
+
+  // -----------------------------------
+  // Handle change events
+  // -----------------------------------
+  async function handleChainChanged(chainId) {
+    console.log(chainId);
+  }
+
+  async function handleNetworkChanged(networkId) {
+    console.log(networkId);
+    switch (networkId) {
+      case "4":
+        setNetwork({
+          chanId: "4",
+          name: "rinkeby",
+        });
+        break;
+
+      case "1":
+        setNetwork({
+          chanId: "1",
+          name: "mainnet",
+        });
+        break;
+
+      case "5":
+        setNetwork({
+          chanId: "5",
+          name: "goerli",
+        });
+        break;
+      case "42":
+        setNetwork({
+          chanId: "42",
+          name: "kovan",
+        });
+        break;
+
+      default:
+        setNetwork({
+          chanId: "",
+          name: "",
+        });
+        console.log("Wrong network");
+    }
+  }
+
+  async function handleAccountsChanged(accounts) {
+    if (accounts.length === 0) {
+      // MetaMask is locked or the user has not connected any accounts
+      console.log("Please connect to MetaMask.");
+    } else if (accounts[0] !== account) {
+      setAccount(accounts[0]);
+      console.log(accounts[0]);
+      /* window.location.reload(); */
+    }
+  }
+
+  useEffect(() => {
+    if (instance) {
+      instance.on("chainChanged", handleChainChanged);
+      instance.on("networkChanged", handleNetworkChanged);
+      instance.on("accountsChanged", handleAccountsChanged);
+      return () => {
+        instance.removeListener("chainChanged");
+        instance.removeListener("networkChanged");
+        instance.removeListener("accountsChanged");
+      };
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [instance]);
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
   /*  async function gettingNetworkNameChainId() {
     const network = await provider.getNetwork();
     setNetwork(network);
@@ -328,6 +376,17 @@ function App() {
   } */
 
   // -----------------------------------
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  /**
+   * Note: Add smart contract events listener
+   *
+   *
+   *
+   */
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   const [ownNFTs, setOwnNFTs] = useState([]);
 
@@ -361,8 +420,6 @@ function App() {
 
   async function loadOwnNFTs() {
     if (isProviderSet) {
-      console.log(provider);
-      console.log(signer);
       let data = await signerContractMarket.fetchAllMyTokens();
 
       const tokenData = await Promise.all(
@@ -431,11 +488,9 @@ function App() {
   const [mintedNFTs, setMintedNFTs] = useState([]);
 
   async function loadMintedNFTs() {
-    if (provider) {
-      console.log(provider);
-      console.log(signer);
+    if (isProviderSet) {
       let data = await signerContractMarket.fetchTokensMintedByCaller();
-      console.log(data);
+
       /* let tokenData = axiosGetTokenData(data);  */
       const tokenData = await Promise.all(
         data.map(async (index) => {
@@ -471,16 +526,13 @@ function App() {
     id = id.toNumber();
     let price = marketItem.price;
     price = ethers.utils.parseEther(price);
-    let tx = await signerContractMarket.buyMarketToken(
+    /* let tx = */ await signerContractMarket.buyMarketToken(
       id,
       ContractAddress[5].NFT,
       {
         value: price,
       }
     );
-
-    loadOwnNFTs();
-    loadOnSaleNFTs();
   }
 
   async function sellNFT(marketItem) {
@@ -501,14 +553,11 @@ function App() {
       ContractAddress[5].NftMarketPlace,
       true
     );
-    let tx = await contract.saleMarketToken(
+    /* let tx = */ await contract.saleMarketToken(
       id,
       previewPriceTwo,
       ContractAddress[5].NFT
     );
-    await tx.wait();
-    loadOwnNFTs();
-    loadOnSaleNFTs();
   }
 
   const [previewPriceTwo, setPreviewPriceTwo] = useState({});
@@ -596,8 +645,6 @@ function App() {
     //first step
     /* const signer = provider.getSigner(); */
 
-    console.log(provider);
-    console.log(signer);
     let contract = new ethers.Contract(ContractAddress[5].NFT, NFT.abi, signer);
 
     // let tx =
