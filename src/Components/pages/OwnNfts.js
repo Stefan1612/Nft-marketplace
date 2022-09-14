@@ -38,7 +38,11 @@ const OwnNfts = (props) => {
             >
               NFT's that you currently own!
             </Typography>
-
+            {props.network.chainId !== 5 ? (
+              <h1>wrong network</h1>
+            ) : (
+              <h1>Right network</h1>
+            )}
             {props.ownNFTs.length === 0 && (
               <h1 className="text-center " style={{ marginTop: "4vh" }}>
                 You don't own any NFTs currently!

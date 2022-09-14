@@ -173,7 +173,6 @@ function App() {
     loadOnSaleNFTs();
     loadOwnNFTs(); // user provider
     loadMintedNFTs(); // user provider
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -182,9 +181,20 @@ function App() {
     loadOnSaleNFTs(); // infura provider
     loadOwnNFTs(); // user provider
     loadMintedNFTs(); // user provider
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isProviderSet]);
+
+  //network
+  const [network, setNetwork] = useState({
+    chanId: "",
+    name: "",
+  });
+
+  useEffect(() => {
+    loadOwnNFTs(); // user provider
+    loadMintedNFTs(); // user provider
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [network]);
 
   const [instance, setInstance] = useState();
 
@@ -199,11 +209,17 @@ function App() {
       await web3Modal.clearCachedProvider();
 
       instance_M = await web3Modal.connect();
-      console.log(instance_M);
+
       setInstance(instance_M);
       const provider_M = new ethers.providers.Web3Provider(instance_M);
       let signer_M = provider_M.getSigner();
       setProvider(provider_M);
+      let network_M = await provider_M.getNetwork();
+      setNetwork({
+        chanId: network_M.chainId,
+        name: network_M.name,
+      });
+      /* console.log(await provider_M.getNetwork()); */
       setSigner(signer_M);
       const accounts = await provider_M.send("eth_requestAccounts");
       setAccount(accounts[0]);
@@ -278,17 +294,11 @@ function App() {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  //network
-  const [network, setNetwork] = useState({
-    chanId: "",
-    name: "",
-  });
-
   // -----------------------------------
   // Handle change events
   // -----------------------------------
   async function handleChainChanged(chainId) {
-    console.log(chainId);
+    /* console.log(chainId); */
   }
 
   async function handleNetworkChanged(networkId) {
@@ -419,7 +429,7 @@ function App() {
   }
 
   async function loadOwnNFTs() {
-    if (isProviderSet) {
+    if (isProviderSet && network.chanId === 5) {
       let data = await signerContractMarket.fetchAllMyTokens();
 
       const tokenData = await Promise.all(
@@ -488,7 +498,9 @@ function App() {
   const [mintedNFTs, setMintedNFTs] = useState([]);
 
   async function loadMintedNFTs() {
-    if (isProviderSet) {
+    console.log("1");
+    console.log(network.chanId);
+    if (isProviderSet && network.chanId === 5) {
       let data = await signerContractMarket.fetchTokensMintedByCaller();
 
       /* let tokenData = axiosGetTokenData(data);  */
@@ -643,21 +655,11 @@ function App() {
   //creating the NFT(first mint at ContractAddress[5].NftMarketPlace, second create market Token at market address)
   async function mintNFT(url) {
     //first step
-    /* const signer = provider.getSigner(); */
 
     let contract = new ethers.Contract(ContractAddress[5].NFT, NFT.abi, signer);
 
     // let tx =
     await contract.createNFT(url);
-
-    /* tx = await tx.wait();
-
-     let event = tx.events[0];
-
-    let value = event.args[2];
-    //console.log(value)
-
-     let tokenId = value.toNumber(); */
 
     //list the item for sale on marketplace
     let listingPrice = await eventContractMarket.getListingPrice();
@@ -734,6 +736,7 @@ function App() {
                 sellNFT={sellNFT}
                 handleChangePrice={handleChangePrice}
                 loadOwnNFTs={loadOwnNFTs}
+                network={network}
               />
             }
           />
