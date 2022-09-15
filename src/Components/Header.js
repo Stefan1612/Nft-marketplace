@@ -389,20 +389,6 @@ export default function PrimarySearchAppBar(props) {
       </AppBar>
       {renderMobileMenu}
       {renderMenu}
-      {/*  {props.showButton === true && 
-      <Box sx={{ marginLeft: "25vw" }} marginTop={34}>
-        <Button variant="contained" onClick={() => console.log("Hello")}>
-          <a href="#">Enter</a>
-        </Button>
-        <Button
-          variant="outlined"
-          sx={{ marginLeft: "5px" }}
-          onClick={(e) => props.FirstLoadGettingAccount()}
-        >
-          Metamask
-        </Button>
-      </Box>
-} */}{" "}
     </Box>
   );
 }

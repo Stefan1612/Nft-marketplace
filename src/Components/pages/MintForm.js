@@ -64,14 +64,14 @@ const MintForm = (props) => {
             <br></br>
             <Button
               variant="outlined"
-              onClick={(e) => props.FirstLoadGettingAccount()}
+              onClick={(e) => props.changeNetworkToGoerli()}
             >
               Switch to Goerli!
             </Button>
             <Button
               variant="outlined"
               sx={{ marginTop: "5px" }}
-              onClick={(e) => props.FirstLoadGettingAccount()}
+              onClick={(e) => props.connectWallet()}
             >
               Connect Wallet!
             </Button>

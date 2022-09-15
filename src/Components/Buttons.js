@@ -24,14 +24,14 @@ const Buttons = (props) => {
       <Button
         variant="outlined"
         sx={{ marginLeft: "5px" }}
-        onClick={(e) => props.FirstLoadGettingAccount()}
+        onClick={(e) => props.connectWallet()}
       >
         Connect Wallet!
       </Button>
       <Button
         variant="outlined"
         sx={{ marginLeft: "5px" }}
-        onClick={(e) => props.FirstLoadGettingAccount()}
+        onClick={(e) => props.changeNetworkToGoerli()}
       >
         Switch to Goerli!
       </Button>

@@ -39,9 +39,28 @@ const OwnNfts = (props) => {
               NFT's that you currently own!
             </Typography>
             {props.network.chainId !== 5 ? (
-              <h1>wrong network</h1>
+              <Box sx={{ textAlign: "center" }}>
+                <Typography variant={"h2"} component={"h2"}>
+                  Wrong network
+                </Typography>
+                <Button
+                  variant={"outlined"}
+                  onClick={(e) => props.changeNetworkToGoerli(e)}
+                >
+                  Connect to Goerli!
+                </Button>
+              </Box>
             ) : (
-              <h1>Right network</h1>
+              <Box sx={{ textAlign: "center" }}>
+                <Typography variant={"h2"} component={"h2"}>
+                  Connected to Goerli
+                </Typography>
+              </Box>
+              /*  props.ownNFTs.length === 0 && (
+                <h1 className="text-center " style={{ marginTop: "4vh" }}>
+                  You don't own any NFTs currently!
+                </h1>
+              ) */
             )}
             {props.ownNFTs.length === 0 && (
               <h1 className="text-center " style={{ marginTop: "4vh" }}>
@@ -112,53 +131,6 @@ const OwnNfts = (props) => {
                   </Grid>
                 </Box>
               </Container>
-              {/*  {props.ownNFTs.map((index) => {
-          return (
-            <div
-              key={index.tokenId}
-              className="card col-md-2 tokenCard"
-              style={{ marginLeft: "5px", height: "50vh" }}
-            >
-              <img
-                alt="NFT"
-                src={index.image}
-                className=" card-img-top imageId"
-              ></img>
-
-              <div className="card-body">
-                <div className="card-title" id="nftName">
-                  {index.name}
-                </div>
-                <div className="card-text" id="nftDescription">
-                  {index.description}
-                </div>
-                <div id="nftPrice">{index.price} Ether</div>
-
-                <input
-                  style={{ width: "100%" }}
-                  onChange={(e) => props.handleChangePrice(e)}
-                  placeholder="Put in Sale price"
-                ></input>
-                <button
-                  className="btn-success"
-                  style={{ width: "45%" }}
-                  id="nftBuy"
-                  onClick={() => props.sellNFT(index)}
-                >
-                  Sell NFT
-                </button>
-                <button
-                  className="btn-danger"
-                  style={{ width: "55%" }}
-                  id="nftBuy"
-                  onClick={() => props.deletingNFT(index)}
-                >
-                  Delete NFT
-                </button>
-              </div>
-            </div>
-          );
-        })} */}
             </div>
           </Box>
         </Box>

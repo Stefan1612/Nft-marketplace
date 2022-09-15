@@ -186,7 +186,7 @@ function App() {
 
   //network
   const [network, setNetwork] = useState({
-    chanId: "",
+    chainId: "",
     name: "",
   });
 
@@ -201,11 +201,10 @@ function App() {
   let instance_M;
 
   //side loaded
-  async function FirstLoadGettingAccount() {
+  async function connectWallet() {
     /// using web3modal
 
     if (!instance) {
-      console.log("first Load ran");
       await web3Modal.clearCachedProvider();
 
       instance_M = await web3Modal.connect();
@@ -216,7 +215,7 @@ function App() {
       setProvider(provider_M);
       let network_M = await provider_M.getNetwork();
       setNetwork({
-        chanId: network_M.chainId,
+        chainId: network_M.chainId,
         name: network_M.name,
       });
       /* console.log(await provider_M.getNetwork()); */
@@ -306,36 +305,37 @@ function App() {
     switch (networkId) {
       case "4":
         setNetwork({
-          chanId: "4",
+          chainId: "4",
           name: "rinkeby",
         });
         break;
 
       case "1":
         setNetwork({
-          chanId: "1",
+          chainId: "1",
           name: "mainnet",
         });
         break;
 
       case "5":
         setNetwork({
-          chanId: "5",
+          chainId: "5",
           name: "goerli",
         });
         break;
       case "42":
         setNetwork({
-          chanId: "42",
+          chainId: "42",
           name: "kovan",
         });
         break;
 
       default:
         setNetwork({
-          chanId: "",
+          chainId: "",
           name: "",
         });
+        window.alert("change Network to Goerli!");
         console.log("Wrong network");
     }
   }
@@ -429,33 +429,11 @@ function App() {
   }
 
   async function loadOwnNFTs() {
-    if (isProviderSet && network.chanId === 5) {
+    if (isProviderSet && network.chainId === 5) {
       let data = await signerContractMarket.fetchAllMyTokens();
 
-      const tokenData = await Promise.all(
-        data.map(async (index) => {
-          //getting the TokenURI using the erc721uri method from our nft contract
-          const tokenUri = await eventContractNFT.tokenURI(index.tokenId);
+      let tokenData = await axiosGetTokenData(data);
 
-          //getting the metadata of the nft using the URI
-          const meta = await axios.get(tokenUri);
-
-          //change the format to something im familiar with
-          let nftData = {
-            tokenId: index.tokenId,
-            price: ethers.utils.formatUnits(index.price.toString(), "ether"),
-            onSale: index.onSale,
-            owner: index.owner,
-            seller: index.seller,
-            minter: index.minter,
-            image: meta.data.image,
-            name: meta.data.name,
-            description: meta.data.description,
-          };
-
-          return nftData;
-        })
-      );
       setOwnNFTs(tokenData);
     }
   }
@@ -498,36 +476,11 @@ function App() {
   const [mintedNFTs, setMintedNFTs] = useState([]);
 
   async function loadMintedNFTs() {
-    console.log("1");
-    console.log(network.chanId);
-    if (isProviderSet && network.chanId === 5) {
+    if (isProviderSet && network.chainId === 5) {
       let data = await signerContractMarket.fetchTokensMintedByCaller();
 
-      /* let tokenData = axiosGetTokenData(data);  */
-      const tokenData = await Promise.all(
-        data.map(async (index) => {
-          //getting the TokenURI using the erc721uri method from our nft contract
-          const tokenUri = await eventContractNFT.tokenURI(index.tokenId);
+      let tokenData = await axiosGetTokenData(data);
 
-          //getting the metadata of the nft using the URI
-          const meta = await axios.get(tokenUri);
-
-          //change the format to something im familiar with
-          let nftData = {
-            tokenId: index.tokenId,
-            price: ethers.utils.formatUnits(index.price.toString(), "ether"),
-            onSale: index.onSale,
-            owner: index.owner,
-            seller: index.seller,
-            minter: index.minter,
-            image: meta.data.image,
-            name: meta.data.name,
-            description: meta.data.description,
-          };
-
-          return nftData;
-        })
-      );
       setMintedNFTs(tokenData);
     }
   }
@@ -682,6 +635,35 @@ function App() {
     setFormInput({ ...formInput, name: e.target.value });
   }
 
+  function changeNetworkToGoerli() {
+    if (provider) {
+      if (network.chainId === 5) {
+        window.alert("already connected to Goerli!");
+        return;
+      }
+      instance.request({
+        /* method: "wallet_addEthereumChain", */
+        method: "wallet_switchEthereumChain",
+        params: [
+          { chainId: "0x5" },
+          /*  {
+            chainId: "0x5",
+            rpcUrls: [
+              "https://goerli.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161",
+            ],
+            chainName: "Goerli",
+            nativeCurrency: {
+              name: "Ethereum",
+              symbol: "ETH",
+              decimals: 18,
+            },
+            blockExplorerUrls: ["https://goerli.etherscan.io"],
+          }, */
+        ],
+      });
+    }
+  }
+
   return (
     <ThemeProvider theme={theme}>
       <Box>
@@ -708,7 +690,8 @@ function App() {
                 mintNFT={mintNFT}
                 onSaleNFTs={onSaleNFTs}
                 buyNFT={buyNFT}
-                FirstLoadGettingAccount={FirstLoadGettingAccount}
+                connectWallet={connectWallet}
+                changeNetworkToGoerli={changeNetworkToGoerli}
               />
             }
           />
@@ -724,6 +707,7 @@ function App() {
                 changeFormInputName={changeFormInputName}
                 fileURL={fileURL}
                 createMarket={createMarket}
+                changeNetworkToGoerli={changeNetworkToGoerli}
               />
             }
           />
@@ -737,6 +721,7 @@ function App() {
                 handleChangePrice={handleChangePrice}
                 loadOwnNFTs={loadOwnNFTs}
                 network={network}
+                changeNetworkToGoerli={changeNetworkToGoerli}
               />
             }
           />
@@ -744,7 +729,12 @@ function App() {
           <Route
             exact
             path="/MintedTokens"
-            element={<MintedTokens mintedNFTs={mintedNFTs} />}
+            element={
+              <MintedTokens
+                mintedNFTs={mintedNFTs}
+                changeNetworkToGoerli={changeNetworkToGoerli}
+              />
+            }
           />
           <Route
             exact

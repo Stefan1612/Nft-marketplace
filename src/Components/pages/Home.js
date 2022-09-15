@@ -11,8 +11,9 @@ const Home = (props) => {
       <Container>
         <Box>
           <Buttons
-            FirstLoadGettingAccount={props.FirstLoadGettingAccount}
+            connectWallet={props.connectWallet}
             showButton={showButton}
+            changeNetworkToGoerli={props.changeNetworkToGoerli}
           />
           <BackgroundImage />
 
