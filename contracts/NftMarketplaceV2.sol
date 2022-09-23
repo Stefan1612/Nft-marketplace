@@ -208,7 +208,7 @@ contract NftMarketPlace is ReentrancyGuard, ERC2771Recipient{
         /// @dev incrementing ID
         s_tokenIds.increment();
         uint256 currentTokenID = s_tokenIds.current();
-
+        
         /// @dev create MarketToken with current ID and save inside mapping
         idToMarketToken[currentTokenID] = MarketToken(
             _nftContractAddress,
